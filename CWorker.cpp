@@ -3,6 +3,7 @@
 #include "CTaskManager.h"
 #include "CTask.h"
 #include <functional>
+#include <thread>
 
 #define WORKER_STACK_SIZE 64*1024
 
@@ -43,12 +44,14 @@ bool CWorker::IsFinished() const
 
 void CWorker::ThreadFunc()
 {
-	//Сохраним в локальную память потока инфу о себе
 	TlsSetValue(m_pTaskManager->m_nTlsWorker, this);
 
 	while (!m_pTaskManager->m_bStopping)
+	{
 		DoWork();
-
+		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+	}
+		
 	m_bFinished = true;
 }
 
@@ -72,8 +75,6 @@ CTaskCounter* CWorker::GetCurrentTaskCounter()
 
 bool CWorker::FindWork()
 {
-	//Считаем смещение чтобы не не пытаться забрать задачи у самого себя
-	//Можно получить дедлок
 	int nOffset = (GetWorkerIndex() + GetTickCount64()) % m_pTaskManager->m_nNumberOfWorkers;
 
 	for (unsigned nWorker = 0; nWorker < m_pTaskManager->m_nNumberOfWorkers; nWorker++)
@@ -236,10 +237,8 @@ bool CWorker::CTaskQueue::TryStealTasks(CTaskQueue& srcQueue)
 	if (m_TaskCount)
 		return false;
 
-	/* grab half the remaining tasks (rounding up) */
 	unsigned nGrabCount = (srcQueue.m_TaskCount + 1) / 2;
 
-	/* copy old tasks to my list */
 	unsigned nTask;
 	CTask** p = m_pTasks;
 	for (nTask = 0; nTask < nGrabCount; nTask++)
@@ -249,7 +248,6 @@ bool CWorker::CTaskQueue::TryStealTasks(CTaskQueue& srcQueue)
 	}
 	m_TaskCount = nGrabCount;
 
-	/* move remaining tasks down */
 	p = srcQueue.m_pTasks;
 	for (; nTask < srcQueue.m_TaskCount; nTask++)
 		*p++ = srcQueue.m_pTasks[nTask];

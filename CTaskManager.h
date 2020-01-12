@@ -11,10 +11,10 @@ public:
 	~CTaskManager();
 
 public:
-	//Запустить менеджер задачь
 	bool Start(int nNumberOfWorkers);
-	//Остановить менеджер задач
 	void Stop();
+
+	unsigned short GetWorkersCount();
 
 public:
 	CWorker m_workers[MAX_WORKERS];

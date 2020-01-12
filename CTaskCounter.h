@@ -10,12 +10,9 @@ public:
 	~CTaskCounter();
 
 public:
-	//Закончена ли цепочка
 	bool IsEmpty() const;
 
-	//Увеличить счетчик задач
 	void Increase();
-	//Уменьшить счетчик задач
 	void Reduce();
 
 private:
