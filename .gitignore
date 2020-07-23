@@ -3,4 +3,8 @@
 *.tlog
 *.txt
 *.pdb
-*.pch
+/x64/*
+/Win32/*
+/Debug/*
+/Release/*
+*.vcxproj.user
