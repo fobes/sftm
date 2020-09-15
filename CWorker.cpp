@@ -261,3 +261,32 @@ bool CWorker::CTaskQueue::TasksIsExist()
 {
 	return m_TaskCount > 0;
 }
+
+CWorker::CRawMemoryManager::CRawMemory::CRawMemory()
+{
+	m_pData = NULL;
+	m_Size = 0;
+}
+
+CWorker::CRawMemoryManager::CRawMemory::~CRawMemory()
+{
+	if (m_pData)
+	{
+		CWorker* pThread = CWorker::GetCurrentThreadWorker();
+
+		pThread->m_rawMemoryManager.m_nUsedCount -= m_Size;
+	}
+}
+
+bool CWorker::CRawMemoryManager::CRawMemory::AllocBytes(size_t sz)
+{
+	CWorker* pThread = CWorker::GetCurrentThreadWorker();
+	if (m_pData || pThread->m_rawMemoryManager.m_nUsedCount + sz > WORKER_RAW_MEMORY_SIZE)
+		return false;
+
+	m_Size = sz;
+	m_pData = pThread->m_rawMemoryManager.m_pMemory + pThread->m_rawMemoryManager.m_nUsedCount;
+	pThread->m_rawMemoryManager.m_nUsedCount += sz;
+
+	return true;
+}

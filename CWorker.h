@@ -34,6 +34,21 @@ public:
 	class TM_API CRawMemoryManager
 	{
 	public:
+		class TM_API CRawMemory
+		{
+		public:
+			CRawMemory();
+			~CRawMemory();
+
+		public:
+			bool AllocBytes(size_t sz);
+
+		public:
+			void* m_pData;
+			size_t m_Size;
+		};
+
+	public:
 		CRawMemoryManager();
 
 	public:
