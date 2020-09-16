@@ -13,6 +13,12 @@ CTaskManager::~CTaskManager()
 
 }
 
+CTaskManager& CTaskManager::GetInstance()
+{
+	static CTaskManager manager;
+	return manager;
+}
+
 bool CTaskManager::Start(int nNumberOfWorkers)
 {
 	m_bStopping = false;

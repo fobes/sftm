@@ -6,9 +6,12 @@
 
 class TM_API CTaskManager
 {
-public:
+private:
 	CTaskManager();
 	~CTaskManager();
+
+public:
+	static CTaskManager& GetInstance();
 
 public:
 	bool Start(int nNumberOfWorkers);
