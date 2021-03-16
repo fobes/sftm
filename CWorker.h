@@ -19,13 +19,13 @@ public:
 	class TM_API CPrivateHeapManager
 	{
 	public:
-		CPrivateHeapManager();
+		CPrivateHeapManager() noexcept;
 
 	public:
-		bool Create();
+		bool Create() noexcept;
 
-		void* Alloc(size_t nSize);
-		void Free(void* pData);
+		void* Alloc(size_t nSize) noexcept;
+		void Free(void* pData) noexcept;
 
 	private:
 		SLIST_HEADER m_FreeList;
@@ -37,11 +37,11 @@ public:
 		class TM_API CRawMemory
 		{
 		public:
-			CRawMemory();
+			CRawMemory() noexcept;
 			~CRawMemory();
 
 		public:
-			bool AllocBytes(size_t sz);
+			bool AllocBytes(size_t nSize) noexcept;
 
 		public:
 			void* m_pData;
@@ -49,13 +49,13 @@ public:
 		};
 
 	public:
-		CRawMemoryManager();
+		CRawMemoryManager() noexcept;
 
 	public:
-		bool Create();
+		bool Create() noexcept;
 
-		void* Alloc(size_t nSize);
-		void Free(size_t nSize);
+		void* Alloc(size_t nSize) noexcept;
+		void Free(size_t nSize) noexcept;
 
 	private:
 		BYTE* m_pMemory;
@@ -66,16 +66,16 @@ private:
 	class CTaskQueue
 	{
 	public:
-		CTaskQueue();
+		CTaskQueue() noexcept;
 		~CTaskQueue();
 
 	public:
-		bool PushTask(CTask *pTask);
-		CTask* PopTask();
+		bool PushTask(CTask *pTask) noexcept;
+		CTask* PopTask() noexcept;
 
-		bool TryStealTasks(CTaskQueue &srcQueue);
+		bool TryStealTasks(CTaskQueue &srcQueue) noexcept;
 
-		bool TasksIsExist();
+		bool TasksIsExist() noexcept;
 
 	public:
 		CTask* m_pTasks[MAX_WORKER_TASKS_QUEUE];
@@ -85,34 +85,34 @@ private:
 	};
 
 public:
-	CWorker();
+	CWorker() noexcept;
 	~CWorker();
 
 public:
-	bool Start(CTaskManager* pTaskManager);
+	bool Start(CTaskManager* pTaskManager) noexcept;
 
 public:
-	static CWorker* GetCurrentThreadWorker();
-	int GetWorkerIndex() const;
-	bool IsFinished() const;
+	static CWorker* GetCurrentThreadWorker() noexcept;
+	int GetWorkerIndex() const noexcept;
+	bool IsFinished() const noexcept;
 
 public:
-	bool PushTask(CTask *pTask);
-	CTaskCounter* GetCurrentTaskCounter();
+	bool PushTask(CTask *pTask) noexcept;
+	CTaskCounter* GetCurrentTaskCounter() noexcept;
 
-	void WorkUntil(CTaskCounter &taskCounter);
+	void WorkUntil(CTaskCounter &taskCounter) noexcept;
 
 public:
-	CPrivateHeapManager& GetPrivateHeapManager();
-	CRawMemoryManager& GetRawMemoryManager();
+	CPrivateHeapManager& GetPrivateHeapManager() noexcept;
+	CRawMemoryManager& GetRawMemoryManager() noexcept;
 
 private:
-	bool Init(CTaskManager* pTaskManager);
+	bool Init(CTaskManager* pTaskManager) noexcept;
 
-	bool FindWork();
+	bool FindWork() noexcept;
 
-	void ThreadFunc();
-	void DoWork();
+	void ThreadFunc() noexcept;
+	void DoWork() noexcept;
 
 private:
 	CTaskManager *m_pTaskManager;

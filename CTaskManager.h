@@ -7,17 +7,17 @@
 class TM_API CTaskManager
 {
 private:
-	CTaskManager();
+	CTaskManager() noexcept;
 	~CTaskManager();
 
 public:
-	static CTaskManager& GetInstance();
+	static CTaskManager& GetInstance() noexcept;
 
 public:
-	bool Start(int nNumberOfWorkers);
-	void Stop();
+	bool Start(int nNumberOfWorkers) noexcept;
+	void Stop() noexcept;
 
-	unsigned short GetWorkersCount();
+	unsigned short GetWorkersCount() const;
 
 public:
 	CWorker m_workers[MAX_WORKERS];

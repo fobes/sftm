@@ -8,7 +8,12 @@ class CWorker;
 class TM_API CTask : public CTaskAllocator
 {
 public:
-	CTask(CTaskCounter &taskCounter);
+	CTask(CTaskCounter &taskCounter) noexcept;
+	CTask() = delete;
+	CTask(const CTask&) = delete;
+	void operator=(const CTask&) = delete;
+	CTask(CTask&&) = delete;
+	CTask& operator=(CTask&&) = delete;
 	virtual ~CTask();
 
 public:

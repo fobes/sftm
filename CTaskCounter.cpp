@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CTaskCounter.h"
 
-CTaskCounter::CTaskCounter() :m_nCount(0)
+CTaskCounter::CTaskCounter() noexcept :m_nCount(0)
 {
 
 }
@@ -11,17 +11,17 @@ CTaskCounter::~CTaskCounter()
 
 }
 
-bool CTaskCounter::IsEmpty() const
+bool CTaskCounter::IsEmpty() const noexcept
 {
 	return m_nCount == 0;
 }
 
-void CTaskCounter::Increase()
+void CTaskCounter::Increase() noexcept
 {
 	m_nCount++;
 }
 
-void CTaskCounter::Reduce()
+void CTaskCounter::Reduce() noexcept
 {
 	m_nCount--;
 }

@@ -3,7 +3,7 @@
 
 DWORD   CTaskManager::m_nTlsWorker;
 
-CTaskManager::CTaskManager():m_nNumberOfWorkers(0), m_bStopping(false)
+CTaskManager::CTaskManager() noexcept :m_nNumberOfWorkers(0), m_bStopping(false)
 {
 
 }
@@ -13,13 +13,13 @@ CTaskManager::~CTaskManager()
 
 }
 
-CTaskManager& CTaskManager::GetInstance()
+CTaskManager& CTaskManager::GetInstance() noexcept
 {
 	static CTaskManager manager;
 	return manager;
 }
 
-bool CTaskManager::Start(int nNumberOfWorkers)
+bool CTaskManager::Start(int nNumberOfWorkers) noexcept
 {
 	m_bStopping = false;
 
@@ -44,7 +44,7 @@ bool CTaskManager::Start(int nNumberOfWorkers)
 	return true;
 }
 
-void CTaskManager::Stop()
+void CTaskManager::Stop() noexcept
 {
 	m_bStopping = true;
 
@@ -60,7 +60,7 @@ void CTaskManager::Stop()
 	m_nTlsWorker = TLS_OUT_OF_INDEXES;
 }
 
-unsigned short CTaskManager::GetWorkersCount()
+unsigned short CTaskManager::GetWorkersCount() const
 {
 	return m_nNumberOfWorkers;
 }
