@@ -3,7 +3,7 @@
 #include "Export.h"
 #include <array>
 
-#define MAX_WORKERS	32
+#define MAX_WORKERS	128
 
 class TM_API CTaskManager
 {
