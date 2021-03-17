@@ -34,7 +34,7 @@ CWorker* CWorker::GetCurrentThreadWorker() noexcept
 
 int CWorker::GetWorkerIndex() const noexcept
 {
-	return int(this - m_pTaskManager->m_workers);
+	return int(this - &m_pTaskManager->m_workers[0]);
 }
 
 bool CWorker::IsFinished() const noexcept

@@ -1,6 +1,7 @@
 #pragma once
 #include "CWorker.h"
 #include "Export.h"
+#include <array>
 
 #define MAX_WORKERS	32
 
@@ -20,7 +21,7 @@ public:
 	unsigned short GetWorkersCount() const;
 
 public:
-	CWorker m_workers[MAX_WORKERS];
+	std::array<CWorker, MAX_WORKERS> m_workers;
 	unsigned short m_nNumberOfWorkers;
 
 	bool m_bStopping;
