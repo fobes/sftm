@@ -65,6 +65,18 @@ public:
 private:
 	class CTaskQueue
 	{
+		class CSpinLock 
+		{
+		public:
+			void lock() noexcept;
+			bool try_lock() noexcept;
+
+			void unlock() noexcept;
+
+		private:
+			std::atomic<bool> m_lock = { 0 };
+		};
+
 	public:
 		CTaskQueue() noexcept;
 		~CTaskQueue();
@@ -81,7 +93,7 @@ private:
 		CTask* m_pTasks[MAX_WORKER_TASKS_QUEUE];
 		unsigned m_TaskCount;
 
-		std::mutex m_mutex;
+		CSpinLock m_lock;
 	};
 
 public:

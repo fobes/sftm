@@ -200,7 +200,7 @@ CWorker::CTaskQueue::~CTaskQueue()
 bool CWorker::CTaskQueue::PushTask(CTask* pTask) noexcept
 {
 	{
-		std::lock_guard<std::mutex> lock(m_mutex);
+		std::lock_guard<CSpinLock> lock(m_lock);
 
 		if (m_TaskCount >= MAX_WORKER_TASKS_QUEUE)
 			return false;
@@ -214,7 +214,7 @@ bool CWorker::CTaskQueue::PushTask(CTask* pTask) noexcept
 
 CTask* CWorker::CTaskQueue::PopTask() noexcept
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<CSpinLock> lock(m_lock);
 
 	if (!m_TaskCount)
 		return NULL;
@@ -227,12 +227,12 @@ CTask* CWorker::CTaskQueue::PopTask() noexcept
 
 bool CWorker::CTaskQueue::TryStealTasks(CTaskQueue& srcQueue) noexcept
 {
-	std::lock_guard<std::mutex> lock(srcQueue.m_mutex);
+	std::lock_guard<CSpinLock> lock(srcQueue.m_lock);
 
 	if (!srcQueue.m_TaskCount)
 		return false;
 
-	std::lock_guard<std::mutex> lockIdleThread(m_mutex);
+	std::lock_guard<CSpinLock> lockIdleThread(m_lock);
 
 	if (m_TaskCount)
 		return false;
@@ -289,4 +289,28 @@ bool CWorker::CRawMemoryManager::CRawMemory::AllocBytes(size_t nSize) noexcept
 	pThread->m_rawMemoryManager.m_nUsedCount += nSize;
 
 	return true;
+}
+
+void CWorker::CTaskQueue::CSpinLock::lock() noexcept
+{
+	for (;;)
+	{
+		if (!m_lock.exchange(true, std::memory_order_acquire))
+			return;
+
+		while (m_lock.load(std::memory_order_relaxed))
+		{
+
+		}
+	}
+}
+
+bool CWorker::CTaskQueue::CSpinLock::try_lock() noexcept
+{
+	return !m_lock.load(std::memory_order_relaxed) && !m_lock.exchange(true, std::memory_order_acquire);
+}
+
+void CWorker::CTaskQueue::CSpinLock::unlock() noexcept
+{
+	m_lock.store(false, std::memory_order_release);
 }
