@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CTaskManager.h"
 
 DWORD   CTaskManager::m_nTlsWorker;
@@ -10,7 +9,7 @@ CTaskManager::CTaskManager() noexcept :m_nNumberOfWorkers(0), m_bStopping(false)
 
 CTaskManager::~CTaskManager()
 {
-
+	Stop();
 }
 
 CTaskManager& CTaskManager::GetInstance() noexcept
@@ -19,7 +18,7 @@ CTaskManager& CTaskManager::GetInstance() noexcept
 	return manager;
 }
 
-bool CTaskManager::Start(int nNumberOfWorkers) noexcept
+bool CTaskManager::Start(unsigned short nNumberOfWorkers) noexcept
 {
 	m_bStopping = false;
 

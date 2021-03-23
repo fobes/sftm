@@ -17,7 +17,7 @@ public:
 	virtual ~CTask();
 
 public:
-	virtual bool Execute(CWorker &worker) = 0;
+	virtual bool Execute(CWorker &worker) noexcept = 0;
 
 public:
 	CTaskCounter &m_taskCounter;

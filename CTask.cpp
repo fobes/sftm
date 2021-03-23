@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CTask.h"
 #include "CWorker.h"
 
