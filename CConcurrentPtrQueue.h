@@ -2,7 +2,7 @@
 #include "CSpinLock.h"
 #include <mutex>
 
-#define QUEUE_PHYSICAL_SIZE 256
+#define QUEUE_PHYSICAL_SIZE 512
 using CSyncPrimitive = CSpinLock;
 
 template<class T> 
@@ -40,17 +40,17 @@ bool CConcurrentPtrQueue<T>::IsEmpty() noexcept
 template<class T>
 bool CConcurrentPtrQueue<T>::TrySteal(CConcurrentPtrQueue& srcQueue) noexcept
 {
-	std::lock_guard<CSyncPrimitive> lock(srcQueue.m_lock);
-
-	if (!srcQueue.m_nCount)
+	if (!srcQueue.m_nCount || m_nCount)
 		return false;
 
+	std::lock_guard<CSyncPrimitive> lock(srcQueue.m_lock);
 	std::lock_guard<CSyncPrimitive> lockIdleThread(m_lock);
 
-	if (m_nCount)
+	if (!srcQueue.m_nCount || m_nCount)
 		return false;
 
 	unsigned nGrabCount = (srcQueue.m_nCount + 1) / 2;
+
 
 	unsigned nTask;
 	T** p = m_pItems;

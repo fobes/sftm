@@ -4,10 +4,9 @@
 #include "CConcurrentPtrQueue.h"
 #include "CPrivateHeapManager.h"
 #include "CRawMemoryManager.h"
+#include "CTask.h"
 
 class CTaskManager;
-class CTask;
-class CTaskCounter;
 
 class TM_API CWorker
 {
@@ -45,13 +44,13 @@ private:
 	void DoWork() noexcept;
 
 private:
-	CTaskManager *m_pTaskManager;
+	CTaskManager* m_pTaskManager = { nullptr };
 
 	std::thread m_thread;
-	volatile bool m_bFinished;
+	volatile bool m_bFinished = { false };
 	
 	CConcurrentPtrQueue<CTask> m_taskQueue;
-	CTaskCounter *m_pCurrentTaskCounter;
+	CTaskCounter* m_pCurrentTaskCounter = { nullptr };
 
 	CPrivateHeapManager m_privateHeapManager;
 	CRawMemoryManager m_rawMemoryManager;

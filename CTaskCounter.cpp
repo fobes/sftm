@@ -1,6 +1,6 @@
 #include "CTaskCounter.h"
 
-CTaskCounter::CTaskCounter() noexcept :m_nCount(0)
+CTaskCounter::CTaskCounter() noexcept
 {
 
 }

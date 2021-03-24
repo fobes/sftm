@@ -7,8 +7,12 @@
 
 class TM_API CTaskManager
 {
-public:
+private:
 	CTaskManager() noexcept;
+	CTaskManager(const CTaskManager&) = delete;
+	void operator=(const CTaskManager&) = delete;
+	CTaskManager(CTaskManager&&) = delete;
+	CTaskManager& operator=(CTaskManager&&) = delete;
 	~CTaskManager();
 
 public:

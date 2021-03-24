@@ -1,12 +1,11 @@
 #include "CWorker.h"
 #include "CTaskManager.h"
-#include "CTask.h"
 #include <functional>
 #include <thread>
 
 #define WORKER_STACK_SIZE 64*1024
 
-CWorker::CWorker() noexcept :m_pTaskManager(NULL), m_bFinished(false), m_pCurrentTaskCounter(NULL)
+CWorker::CWorker() noexcept
 {
 
 }
@@ -64,8 +63,10 @@ bool CWorker::Init(CTaskManager *pTaskManager) noexcept
 
 bool CWorker::PushTask(CTask *pTask) noexcept
 {
-	pTask->m_taskCounter.Increase();
+	if (!pTask)
+		return false;
 
+	pTask->m_taskCounter.Increase();
 	bool bResult = m_taskQueue.Push(pTask);
 	if (!bResult)
 		pTask->m_taskCounter.Reduce();

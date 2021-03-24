@@ -20,5 +20,5 @@ public:
 	void Reduce() noexcept;
 
 private:
-	std::atomic<size_t> m_nCount;
+	std::atomic<size_t> m_nCount = { 0 };
 };
