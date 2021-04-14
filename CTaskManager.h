@@ -22,13 +22,14 @@ public:
 	bool Start(unsigned short nNumberOfWorkers) noexcept;
 	void Stop() noexcept;
 
+	bool AddWorker();
+	void RemoveWorker();
+
 	unsigned short GetWorkersCount() const;
 
 public:
 	std::array<CWorker, MAX_WORKERS> m_workers;
 	unsigned short m_nNumberOfWorkers;
-
-	bool m_bStopping;
 
 public:
 	static DWORD m_nTlsWorker;

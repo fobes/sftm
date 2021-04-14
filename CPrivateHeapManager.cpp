@@ -9,7 +9,7 @@ CPrivateHeapManager::CPrivateHeapManager() noexcept
 
 CPrivateHeapManager::~CPrivateHeapManager()
 {
-
+	Release();
 }
 
 bool CPrivateHeapManager::Create() noexcept
@@ -19,6 +19,12 @@ bool CPrivateHeapManager::Create() noexcept
 	InitializeSListHead(&m_FreeList);
 
 	return m_hHeap != NULL;
+}
+
+void CPrivateHeapManager::Release() noexcept
+{
+	if (m_hHeap != nullptr && HeapDestroy(m_hHeap))
+		m_hHeap = nullptr;
 }
 
 void* CPrivateHeapManager::Allocate(size_t nSize) noexcept

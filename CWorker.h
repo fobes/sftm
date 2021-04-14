@@ -19,6 +19,8 @@ public:
 
 public:
 	bool Start(CTaskManager* pTaskManager) noexcept;
+	void Stop() noexcept;
+	void ReleaseResources() noexcept;
 
 public:
 	static CWorker* GetCurrentThreadWorker() noexcept;
@@ -48,6 +50,7 @@ private:
 
 	std::thread m_thread;
 	volatile bool m_bFinished = { false };
+	volatile bool m_bStopping = { true };
 	
 	CConcurrentPtrQueue<CTask> m_taskQueue;
 	CTaskCounter* m_pCurrentTaskCounter = { nullptr };

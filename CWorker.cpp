@@ -20,9 +20,29 @@ bool CWorker::Start(CTaskManager *pTaskManager) noexcept
 	if (!Init(pTaskManager))
 		return false;
 
+	m_bStopping = false;
+
 	m_thread = std::thread(std::bind(&CWorker::ThreadFunc, this));
 
 	return true;
+}
+
+void CWorker::Stop() noexcept
+{
+	m_bStopping = true;
+}
+
+void CWorker::ReleaseResources() noexcept
+{
+	m_pTaskManager = nullptr;
+
+	m_bFinished = false;
+	m_bStopping = true;
+
+	m_pCurrentTaskCounter = nullptr;
+
+	m_privateHeapManager.Release();
+	m_rawMemoryManager.Release();
 }
 
 CWorker* CWorker::GetCurrentThreadWorker() noexcept
@@ -44,7 +64,7 @@ void CWorker::ThreadFunc() noexcept
 {
 	TlsSetValue(m_pTaskManager->m_nTlsWorker, this);
 
-	while (!m_pTaskManager->m_bStopping)
+	while (!m_bStopping)
 	{
 		DoWork();
 		std::this_thread::sleep_for(std::chrono::nanoseconds(1));

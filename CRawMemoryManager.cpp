@@ -10,7 +10,7 @@ CRawMemoryManager::CRawMemoryManager() noexcept
 
 CRawMemoryManager::~CRawMemoryManager()
 {
-
+	Release();
 }
 
 bool CRawMemoryManager::Create() noexcept
@@ -19,6 +19,14 @@ bool CRawMemoryManager::Create() noexcept
 	m_nUsedCount = 0;
 
 	return m_pMemory != NULL;
+}
+
+void CRawMemoryManager::Release() noexcept
+{
+	delete[] m_pMemory;
+	m_pMemory == nullptr;
+
+	m_nUsedCount = 0;
 }
 
 void* CRawMemoryManager::Allocate(size_t nSize) noexcept

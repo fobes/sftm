@@ -24,6 +24,7 @@ public:
 
 public:
 	bool Create() noexcept;
+	void Release() noexcept;
 
 public:
 	void* Allocate(size_t nSize) noexcept;
