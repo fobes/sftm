@@ -24,7 +24,7 @@ bool CRawMemoryManager::Create() noexcept
 void CRawMemoryManager::Release() noexcept
 {
 	delete[] m_pMemory;
-	m_pMemory == nullptr;
+	m_pMemory = nullptr;
 
 	m_nUsedCount = 0;
 }

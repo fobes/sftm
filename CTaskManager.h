@@ -7,6 +7,8 @@
 
 class TM_API CTaskManager
 {
+	friend CWorker;
+
 private:
 	CTaskManager() noexcept;
 	CTaskManager(const CTaskManager&) = delete;
@@ -27,11 +29,15 @@ public:
 
 	unsigned short GetWorkersCount() const;
 
-public:
+private:
 	std::array<CWorker, MAX_WORKERS> m_workers;
 	unsigned short m_nNumberOfWorkers;
 
-public:
+private:
+	std::condition_variable m_cvWorkerIdle;
+	std::mutex m_mtxWorkerIdle;
+
+private:
 	static DWORD m_nTlsWorker;
 }; 
 

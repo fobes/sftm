@@ -67,7 +67,8 @@ void CWorker::ThreadFunc() noexcept
 	while (!m_bStopping)
 	{
 		DoWork();
-		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+		
+		Idle();
 	}
 		
 	m_bFinished = true;
@@ -90,6 +91,8 @@ bool CWorker::PushTask(CTask *pTask) noexcept
 	bool bResult = m_taskQueue.Push(pTask);
 	if (!bResult)
 		pTask->m_taskCounter.Reduce();
+
+	m_pTaskManager->m_cvWorkerIdle.notify_one();
 
 	return bResult;
 }
@@ -151,4 +154,10 @@ void CWorker::DoWork() noexcept
 		}
 	} 
 	while (FindWork());
+}
+
+void CWorker::Idle() noexcept
+{
+	std::unique_lock<std::mutex> lock(m_pTaskManager->m_mtxWorkerIdle);
+	m_pTaskManager->m_cvWorkerIdle.wait(lock);
 }

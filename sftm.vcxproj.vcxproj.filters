@@ -2,74 +2,80 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="CTask.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTaskAllocator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTaskCounter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTaskManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CWorker.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSpinLock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="CPrivateHeapManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Utils\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CRawMemoryManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Utils\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSpinLock.cpp">
+      <Filter>Utils\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTask.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CTaskAllocator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CTaskCounter.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CTaskManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CWorker.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Export.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSpinLock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="targetver.h" />
     <ClInclude Include="CConcurrentPtrQueue.h">
-      <Filter>Header Files</Filter>
+      <Filter>Utils\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CPrivateHeapManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Utils\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CRawMemoryManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Utils\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CSpinLock.h">
+      <Filter>Utils\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files">
+    <Filter Include="Core">
+      <UniqueIdentifier>{1e0bc0c2-2cf2-418f-88c7-ea8425d62944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files">
       <UniqueIdentifier>{75df0e73-3b01-48e9-bec0-01ed894d2138}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
+    <Filter Include="Core\Source Files">
       <UniqueIdentifier>{1dd3f2ef-43dd-47d1-b658-57d49a1d217c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{c38d2e0a-6de6-41e8-af9a-bde4f4fcc832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Header Files">
+      <UniqueIdentifier>{3a3600d4-0d68-4246-af0f-e1c683677752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Source Files">
+      <UniqueIdentifier>{39e086d3-07c5-4d05-83bd-59876fe9e399}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

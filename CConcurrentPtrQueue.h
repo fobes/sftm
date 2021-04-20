@@ -3,7 +3,7 @@
 #include <mutex>
 
 #define QUEUE_PHYSICAL_SIZE 512
-using CSyncPrimitive = CSpinLock;
+using CSyncPrimitive = std::mutex;
 
 template<class T> 
 class CConcurrentPtrQueue

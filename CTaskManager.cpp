@@ -46,6 +46,8 @@ void CTaskManager::Stop() noexcept
 	for (unsigned short nWorker = 1; nWorker < m_nNumberOfWorkers; nWorker++)
 		m_workers[nWorker].Stop();
 
+	m_cvWorkerIdle.notify_all();
+
 	for (unsigned short nWorker = 1; nWorker < m_nNumberOfWorkers; nWorker++)
 	{
 		while (!m_workers[nWorker].IsFinished())

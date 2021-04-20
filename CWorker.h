@@ -44,6 +44,7 @@ private:
 
 	void ThreadFunc() noexcept;
 	void DoWork() noexcept;
+	void Idle() noexcept;
 
 private:
 	CTaskManager* m_pTaskManager = { nullptr };
