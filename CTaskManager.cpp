@@ -60,7 +60,7 @@ void CTaskManager::Stop() noexcept
 	m_nTlsWorker = TLS_OUT_OF_INDEXES;
 }
 
-bool CTaskManager::AddWorker()
+bool CTaskManager::AddWorker() noexcept
 {
 	if (m_nNumberOfWorkers + 1 >= MAX_WORKERS)
 		return false;
@@ -73,7 +73,7 @@ bool CTaskManager::AddWorker()
 	return true;
 }
 
-void CTaskManager::RemoveWorker()
+void CTaskManager::RemoveWorker() noexcept
 {
 	m_workers[m_nNumberOfWorkers].Stop();
 
@@ -86,7 +86,7 @@ void CTaskManager::RemoveWorker()
 	m_nNumberOfWorkers--;
 }
 
-unsigned short CTaskManager::GetWorkersCount() const
+unsigned short CTaskManager::GetWorkersCount() const noexcept
 {
 	return m_nNumberOfWorkers;
 }

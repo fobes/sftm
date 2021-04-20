@@ -24,10 +24,10 @@ public:
 	bool Start(unsigned short nNumberOfWorkers) noexcept;
 	void Stop() noexcept;
 
-	bool AddWorker();
-	void RemoveWorker();
+	bool AddWorker() noexcept;
+	void RemoveWorker() noexcept;
 
-	unsigned short GetWorkersCount() const;
+	unsigned short GetWorkersCount() const noexcept;
 
 private:
 	std::array<CWorker, MAX_WORKERS> m_workers;
