@@ -9,7 +9,7 @@ class TM_API CTaskManager
 {
 	friend CWorker;
 
-private:
+public:
 	CTaskManager() noexcept;
 	CTaskManager(const CTaskManager&) = delete;
 	void operator=(const CTaskManager&) = delete;

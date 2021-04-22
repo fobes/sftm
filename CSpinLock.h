@@ -1,7 +1,8 @@
 #pragma once
+#include "Export.h"
 #include <atomic>
 
-class CSpinLock
+class TM_API CSpinLock
 {
 public:
 	void lock() noexcept;
