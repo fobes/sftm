@@ -1,14 +1,16 @@
 #pragma once
-
 #include "CTaskAllocator.h"
-#include "CTaskCounter.h"
+#include "CChainController.h"
 
 class CWorker;
 
 class TM_API CTask : public CTaskAllocator
 {
 public:
-	CTask(CTaskCounter &taskCounter) noexcept;
+	enum ETaskType { ESync = 0, EAsync = 1 };
+
+public:
+	CTask(CChainController* pChainController) noexcept;
 	CTask() = delete;
 	CTask(const CTask&) = delete;
 	void operator=(const CTask&) = delete;
@@ -17,8 +19,13 @@ public:
 	virtual ~CTask();
 
 public:
-	virtual bool Execute(CWorker &worker) noexcept = 0;
+	ETaskType GetType() const noexcept;
+	CChainController* GetChainController() const noexcept;
 
 public:
-	CTaskCounter &m_taskCounter;
+	virtual bool Execute(CWorker& worker) noexcept = 0;
+
+protected:
+	CChainController* m_pChainController;
+	ETaskType m_eType;
 };

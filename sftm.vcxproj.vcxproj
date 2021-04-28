@@ -170,7 +170,7 @@
     <ClInclude Include="CRawMemoryManager.h" />
     <ClInclude Include="CTask.h" />
     <ClInclude Include="CTaskAllocator.h" />
-    <ClInclude Include="CTaskCounter.h" />
+    <ClInclude Include="CChainController.h" />
     <ClInclude Include="CTaskManager.h" />
     <ClInclude Include="CWorker.h" />
     <ClInclude Include="Export.h" />
@@ -182,7 +182,7 @@
     <ClCompile Include="CRawMemoryManager.cpp" />
     <ClCompile Include="CTask.cpp" />
     <ClCompile Include="CTaskAllocator.cpp" />
-    <ClCompile Include="CTaskCounter.cpp" />
+    <ClCompile Include="CChainController.cpp" />
     <ClCompile Include="CTaskManager.cpp" />
     <ClCompile Include="CWorker.cpp" />
     <ClCompile Include="dllmain.cpp" />

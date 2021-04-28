@@ -1,6 +1,6 @@
 #include "CTaskManager.h"
 
-DWORD   CTaskManager::m_nTlsWorker;
+DWORD CTaskManager::m_nTlsWorker;
 
 CTaskManager::CTaskManager() noexcept :m_nNumberOfWorkers(0)
 {
@@ -18,12 +18,14 @@ CTaskManager& CTaskManager::GetInstance() noexcept
 	return manager;
 }
 
-bool CTaskManager::Start(unsigned short nNumberOfWorkers) noexcept
+bool CTaskManager::Start(unsigned short nNumberOfWorkers, CWorkerFirstFunc&& workerFirstFunc) noexcept
 {
 	if (nNumberOfWorkers > MAX_WORKERS)
 		nNumberOfWorkers = MAX_WORKERS;
 	if (nNumberOfWorkers < 1)
 		nNumberOfWorkers = 1;
+
+	m_workerFirstFunc = std::move(workerFirstFunc);
 
 	m_nTlsWorker = TlsAlloc();
 	if (m_nTlsWorker == TLS_OUT_OF_INDEXES)
@@ -58,6 +60,8 @@ void CTaskManager::Stop() noexcept
 
 	TlsFree(m_nTlsWorker);
 	m_nTlsWorker = TLS_OUT_OF_INDEXES;
+
+	m_nNumberOfWorkers = 0;
 }
 
 bool CTaskManager::AddWorker() noexcept
@@ -90,4 +94,3 @@ unsigned short CTaskManager::GetWorkersCount() const noexcept
 {
 	return m_nNumberOfWorkers;
 }
-

@@ -1,13 +1,17 @@
 #pragma once
 #include "CSpinLock.h"
 #include <mutex>
+#include <functional>
 
 #define QUEUE_PHYSICAL_SIZE 512
 using CSyncPrimitive = CSpinLock;
 
-template<class T> 
+template<class T>
 class CConcurrentPtrQueue
 {
+public:
+	using CAfterPushFunc = void (*)(T* item);
+
 public:
 	CConcurrentPtrQueue() noexcept {}
 	CConcurrentPtrQueue(const CConcurrentPtrQueue&) = delete;
@@ -17,7 +21,7 @@ public:
 	~CConcurrentPtrQueue() {}
 
 public:
-	bool Push(T* pItem) noexcept;
+	bool Push(T* pItem, CAfterPushFunc pFunc) noexcept;
 	T* Pop() noexcept;
 
 	bool TrySteal(CConcurrentPtrQueue& srcQueue) noexcept;
@@ -85,7 +89,7 @@ T* CConcurrentPtrQueue<T>::Pop() noexcept
 }
 
 template<class T>
-bool CConcurrentPtrQueue<T>::Push(T* pItem) noexcept
+bool CConcurrentPtrQueue<T>::Push(T* pItem, CAfterPushFunc pFunc) noexcept
 {
 	if (!pItem)
 		return false;
@@ -97,6 +101,8 @@ bool CConcurrentPtrQueue<T>::Push(T* pItem) noexcept
 			return false;
 
 		m_pItems[m_nCount++] = pItem;
+
+		pFunc(pItem);
 	}
 
 	return true;

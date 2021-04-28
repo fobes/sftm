@@ -1,5 +1,4 @@
 #pragma once
-#include "Export.h"
 #include <thread>
 #include "CConcurrentPtrQueue.h"
 #include "CPrivateHeapManager.h"
@@ -28,10 +27,10 @@ public:
 	bool IsFinished() const noexcept;
 
 public:
-	bool PushTask(CTask *pTask) noexcept;
-	CTaskCounter* GetCurrentTaskCounter() noexcept;
+	bool PushTask(CTask* pTask) noexcept;
+	CChainController* GetCurrentChainController() noexcept;
 
-	void WorkUntil(CTaskCounter &taskCounter) noexcept;
+	void WorkUntil(CChainController& chainController) noexcept;
 
 public:
 	CPrivateHeapManager& GetPrivateHeapManager() noexcept;
@@ -52,9 +51,9 @@ private:
 	std::thread m_thread;
 	volatile bool m_bFinished = { false };
 	volatile bool m_bStopping = { true };
-	
+
 	CConcurrentPtrQueue<CTask> m_taskQueue;
-	CTaskCounter* m_pCurrentTaskCounter = { nullptr };
+	CChainController* m_pCurrentChainController = { nullptr };
 
 	CPrivateHeapManager m_privateHeapManager;
 	CRawMemoryManager m_rawMemoryManager;

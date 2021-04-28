@@ -24,5 +24,3 @@ private:
 	SLIST_HEADER m_FreeList;
 	HANDLE m_hHeap = { nullptr };
 };
-
-

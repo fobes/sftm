@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Export.h"
 
 class TM_API CTaskAllocator
@@ -20,6 +19,5 @@ public:
 	void operator delete[](void*) = delete;
 
 private:
-	void *m_pData;
+	void* m_pData;
 };
-

@@ -13,4 +13,3 @@ public:
 private:
 	std::atomic<bool> m_lock = { 0 };
 };
-

@@ -20,4 +20,3 @@ void CTaskAllocator::operator delete(void* p) noexcept
 {
 	((CWorker*)((CTaskAllocator*)p)->m_pData)->GetPrivateHeapManager().Free(p);
 }
-

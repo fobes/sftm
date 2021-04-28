@@ -34,4 +34,3 @@ private:
 	char* m_pMemory = { nullptr };
 	size_t m_nUsedCount = { 0 };
 };
-

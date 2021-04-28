@@ -12,7 +12,7 @@ CWorker::CWorker() noexcept
 
 CWorker::~CWorker()
 {
-
+	ReleaseResources();
 }
 
 bool CWorker::Start(CTaskManager *pTaskManager) noexcept
@@ -23,6 +23,7 @@ bool CWorker::Start(CTaskManager *pTaskManager) noexcept
 	m_bStopping = false;
 
 	m_thread = std::thread(std::bind(&CWorker::ThreadFunc, this));
+	m_thread.detach();
 
 	return true;
 }
@@ -39,7 +40,7 @@ void CWorker::ReleaseResources() noexcept
 	m_bFinished = false;
 	m_bStopping = true;
 
-	m_pCurrentTaskCounter = nullptr;
+	m_pCurrentChainController = nullptr;
 
 	m_privateHeapManager.Release();
 	m_rawMemoryManager.Release();
@@ -62,6 +63,8 @@ bool CWorker::IsFinished() const noexcept
 
 void CWorker::ThreadFunc() noexcept
 {
+	m_pTaskManager->m_workerFirstFunc();
+
 	TlsSetValue(m_pTaskManager->m_nTlsWorker, this);
 
 	while (!m_bStopping)
@@ -87,19 +90,20 @@ bool CWorker::PushTask(CTask *pTask) noexcept
 	if (!pTask)
 		return false;
 
-	pTask->m_taskCounter.Increase();
-	bool bResult = m_taskQueue.Push(pTask);
-	if (!bResult)
-		pTask->m_taskCounter.Reduce();
+	bool bResult = m_taskQueue.Push(pTask, [](CTask* pTask) noexcept {
+		auto pController = pTask->GetChainController();
+		if (pController)
+			pController->Increase();
+	});
 
 	m_pTaskManager->m_cvWorkerIdle.notify_one();
 
 	return bResult;
 }
 
-CTaskCounter* CWorker::GetCurrentTaskCounter() noexcept
+CChainController* CWorker::GetCurrentChainController() noexcept
 {
-	return m_pCurrentTaskCounter;
+	return m_pCurrentChainController;
 }
 
 bool CWorker::FindWork() noexcept
@@ -122,9 +126,9 @@ bool CWorker::FindWork() noexcept
 	return false;
 }
 
-void CWorker::WorkUntil(CTaskCounter& taskCounter) noexcept
+void CWorker::WorkUntil(CChainController &chainController) noexcept
 {
-	while (!taskCounter.IsEmpty())
+	while (!chainController.IsFinished())
 		DoWork();
 }
 
@@ -142,15 +146,24 @@ void CWorker::DoWork() noexcept
 {
 	do
 	{
-		while (CTask * pTask = m_taskQueue.Pop())
+		while (CTask *pTask = m_taskQueue.Pop())
 		{
-			CTaskCounter* pLastCompletion = m_pCurrentTaskCounter;
-			m_pCurrentTaskCounter = &pTask->m_taskCounter;
-			
-			pTask->Execute(*this);
-			
-			m_pCurrentTaskCounter->Reduce();
-			m_pCurrentTaskCounter = pLastCompletion;
+			if (pTask->GetType() == CTask::ESync)
+			{
+				CChainController* pLastController = m_pCurrentChainController;
+				m_pCurrentChainController = pTask->GetChainController();
+
+				pTask->Execute(*this);
+
+				m_pCurrentChainController->Reduce();
+				m_pCurrentChainController = pLastController;
+			}
+			else
+			{
+				m_pCurrentChainController = nullptr;
+
+				pTask->Execute(*this);
+			}
 		}
 	} 
 	while (FindWork());

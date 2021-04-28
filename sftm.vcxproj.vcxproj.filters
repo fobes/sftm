@@ -7,7 +7,7 @@
     <ClCompile Include="CTaskAllocator.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CTaskCounter.cpp">
+    <ClCompile Include="CChainController.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTaskManager.cpp">
@@ -34,7 +34,7 @@
     <ClInclude Include="CTaskAllocator.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CTaskCounter.h">
+    <ClInclude Include="CChainController.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CTaskManager.h">
