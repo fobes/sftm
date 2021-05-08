@@ -165,28 +165,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CConcurrentPtrQueue.h" />
-    <ClInclude Include="CPrivateHeapManager.h" />
-    <ClInclude Include="CRawMemoryManager.h" />
-    <ClInclude Include="CTask.h" />
-    <ClInclude Include="CTaskAllocator.h" />
-    <ClInclude Include="CChainController.h" />
-    <ClInclude Include="CTaskManager.h" />
-    <ClInclude Include="CWorker.h" />
+    <ClInclude Include="CSftmConcurrentPtrQueue.h" />
+    <ClInclude Include="CSftmPrivateHeapManager.h" />
+    <ClInclude Include="CSftmRawMemoryManager.h" />
+    <ClInclude Include="CSftmTask.h" />
+    <ClInclude Include="CSftmTaskAllocator.h" />
+    <ClInclude Include="CSftmChainController.h" />
+    <ClInclude Include="CSftmTaskManager.h" />
+    <ClInclude Include="CSftmWorker.h" />
     <ClInclude Include="Export.h" />
-    <ClInclude Include="CSpinLock.h" />
+    <ClInclude Include="CSftmSpinLock.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CPrivateHeapManager.cpp" />
-    <ClCompile Include="CRawMemoryManager.cpp" />
-    <ClCompile Include="CTask.cpp" />
-    <ClCompile Include="CTaskAllocator.cpp" />
-    <ClCompile Include="CChainController.cpp" />
-    <ClCompile Include="CTaskManager.cpp" />
-    <ClCompile Include="CWorker.cpp" />
+    <ClCompile Include="CSftmPrivateHeapManager.cpp" />
+    <ClCompile Include="CSftmRawMemoryManager.cpp" />
+    <ClCompile Include="CSftmTask.cpp" />
+    <ClCompile Include="CSftmTaskAllocator.cpp" />
+    <ClCompile Include="CSftmChainController.cpp" />
+    <ClCompile Include="CSftmTaskManager.cpp" />
+    <ClCompile Include="CSftmWorker.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="CSpinLock.cpp" />
+    <ClCompile Include="CSftmSpinLock.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,14 +1,14 @@
 #pragma once
 #include "Export.h"
 
-class TM_API CRawMemoryManager
+class TM_API CSftmRawMemoryManager
 {
 public:
-	class TM_API CRawMemory
+	class TM_API CSftmRawMemory
 	{
 	public:
-		CRawMemory() noexcept;
-		~CRawMemory();
+		CSftmRawMemory() noexcept;
+		~CSftmRawMemory();
 
 	public:
 		bool Allocate(size_t nSize) noexcept;
@@ -19,8 +19,8 @@ public:
 	};
 
 public:
-	CRawMemoryManager() noexcept;
-	~CRawMemoryManager();
+	CSftmRawMemoryManager() noexcept;
+	~CSftmRawMemoryManager();
 
 public:
 	bool Create() noexcept;

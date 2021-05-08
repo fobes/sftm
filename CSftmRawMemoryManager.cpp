@@ -1,19 +1,19 @@
-#include "CRawMemoryManager.h"
-#include "CWorker.h"
+#include "CSftmRawMemoryManager.h"
+#include "CSftmWorker.h"
 
 #define WORKER_RAW_MEMORY_SIZE (16*1024*1024)
 
-CRawMemoryManager::CRawMemoryManager() noexcept
+CSftmRawMemoryManager::CSftmRawMemoryManager() noexcept
 {
 
 }
 
-CRawMemoryManager::~CRawMemoryManager()
+CSftmRawMemoryManager::~CSftmRawMemoryManager()
 {
 	Release();
 }
 
-bool CRawMemoryManager::Create() noexcept
+bool CSftmRawMemoryManager::Create() noexcept
 {
 	m_pMemory = new char[WORKER_RAW_MEMORY_SIZE];
 	m_nUsedCount = 0;
@@ -21,7 +21,7 @@ bool CRawMemoryManager::Create() noexcept
 	return m_pMemory != NULL;
 }
 
-void CRawMemoryManager::Release() noexcept
+void CSftmRawMemoryManager::Release() noexcept
 {
 	delete[] m_pMemory;
 	m_pMemory = nullptr;
@@ -29,7 +29,7 @@ void CRawMemoryManager::Release() noexcept
 	m_nUsedCount = 0;
 }
 
-void* CRawMemoryManager::Allocate(size_t nSize) noexcept
+void* CSftmRawMemoryManager::Allocate(size_t nSize) noexcept
 {
 	if (m_nUsedCount + nSize > WORKER_RAW_MEMORY_SIZE)
 		return NULL;
@@ -40,29 +40,29 @@ void* CRawMemoryManager::Allocate(size_t nSize) noexcept
 	return ptr;
 }
 
-void CRawMemoryManager::Free(size_t nSize) noexcept
+void CSftmRawMemoryManager::Free(size_t nSize) noexcept
 {
 	m_nUsedCount -= nSize;
 }
 
-CRawMemoryManager::CRawMemory::CRawMemory() noexcept
+CSftmRawMemoryManager::CSftmRawMemory::CSftmRawMemory() noexcept
 {
 
 }
 
-CRawMemoryManager::CRawMemory::~CRawMemory()
+CSftmRawMemoryManager::CSftmRawMemory::~CSftmRawMemory()
 {
 	if (m_pData)
 	{
-		CWorker* pThread = CWorker::GetCurrentThreadWorker();
+		CSftmWorker* pThread = CSftmWorker::GetCurrentThreadWorker();
 
 		pThread->m_rawMemoryManager.m_nUsedCount -= m_Size;
 	}
 }
 
-bool CRawMemoryManager::CRawMemory::Allocate(size_t nSize) noexcept
+bool CSftmRawMemoryManager::CSftmRawMemory::Allocate(size_t nSize) noexcept
 {
-	CWorker* pThread = CWorker::GetCurrentThreadWorker();
+	CSftmWorker* pThread = CSftmWorker::GetCurrentThreadWorker();
 	if (m_pData || pThread->m_rawMemoryManager.m_nUsedCount + nSize > WORKER_RAW_MEMORY_SIZE)
 		return false;
 

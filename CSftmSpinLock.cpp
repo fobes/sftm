@@ -1,6 +1,6 @@
-#include "CSpinLock.h"
+#include "CSftmSpinLock.h"
 
-void CSpinLock::lock() noexcept
+void CSftmSpinLock::lock() noexcept
 {
 	for (;;)
 	{
@@ -14,12 +14,12 @@ void CSpinLock::lock() noexcept
 	}
 }
 
-bool CSpinLock::try_lock() noexcept
+bool CSftmSpinLock::try_lock() noexcept
 {
 	return !m_lock.load(std::memory_order_relaxed) && !m_lock.exchange(true, std::memory_order_acquire);
 }
 
-void CSpinLock::unlock() noexcept
+void CSftmSpinLock::unlock() noexcept
 {
 	m_lock.store(false, std::memory_order_release);
 }

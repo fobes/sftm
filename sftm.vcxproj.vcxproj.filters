@@ -1,59 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="CTask.cpp">
+    <ClCompile Include="CSftmTask.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CTaskAllocator.cpp">
+    <ClCompile Include="CSftmTaskAllocator.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CChainController.cpp">
+    <ClCompile Include="CSftmChainController.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CTaskManager.cpp">
+    <ClCompile Include="CSftmTaskManager.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CWorker.cpp">
+    <ClCompile Include="CSftmWorker.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="CPrivateHeapManager.cpp">
+    <ClCompile Include="CSftmPrivateHeapManager.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CRawMemoryManager.cpp">
+    <ClCompile Include="CSftmRawMemoryManager.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSpinLock.cpp">
+    <ClCompile Include="CSftmSpinLock.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CTask.h">
+    <ClInclude Include="CSftmTask.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CTaskAllocator.h">
+    <ClInclude Include="CSftmTaskAllocator.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CChainController.h">
+    <ClInclude Include="CSftmChainController.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CTaskManager.h">
+    <ClInclude Include="CSftmTaskManager.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CWorker.h">
+    <ClInclude Include="CSftmWorker.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="CConcurrentPtrQueue.h">
+    <ClInclude Include="CSftmConcurrentPtrQueue.h">
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CPrivateHeapManager.h">
+    <ClInclude Include="CSftmPrivateHeapManager.h">
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CRawMemoryManager.h">
+    <ClInclude Include="CSftmRawMemoryManager.h">
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSpinLock.h">
+    <ClInclude Include="CSftmSpinLock.h">
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Export.h" />

@@ -1,30 +1,30 @@
 #pragma once
-#include "CSpinLock.h"
+#include "CSftmSpinLock.h"
 #include <mutex>
 #include <functional>
 
 #define QUEUE_PHYSICAL_SIZE 512
-using CSyncPrimitive = CSpinLock;
+using CSyncPrimitive = CSftmSpinLock;
 
 template<class T>
-class CConcurrentPtrQueue
+class CSftmConcurrentPtrQueue
 {
 public:
 	using CAfterPushFunc = void (*)(T* item);
 
 public:
-	CConcurrentPtrQueue() noexcept {}
-	CConcurrentPtrQueue(const CConcurrentPtrQueue&) = delete;
-	void operator=(const CConcurrentPtrQueue&) = delete;
-	CConcurrentPtrQueue(CConcurrentPtrQueue&&) = delete;
-	CConcurrentPtrQueue& operator=(CConcurrentPtrQueue&&) = delete;
-	~CConcurrentPtrQueue() {}
+	CSftmConcurrentPtrQueue() noexcept {}
+	CSftmConcurrentPtrQueue(const CSftmConcurrentPtrQueue&) = delete;
+	void operator=(const CSftmConcurrentPtrQueue&) = delete;
+	CSftmConcurrentPtrQueue(CSftmConcurrentPtrQueue&&) = delete;
+	CSftmConcurrentPtrQueue& operator=(CSftmConcurrentPtrQueue&&) = delete;
+	~CSftmConcurrentPtrQueue() {}
 
 public:
 	bool Push(T* pItem, CAfterPushFunc pFunc) noexcept;
 	T* Pop() noexcept;
 
-	bool TrySteal(CConcurrentPtrQueue& srcQueue) noexcept;
+	bool TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept;
 
 	bool IsEmpty() noexcept;
 
@@ -36,13 +36,13 @@ private:
 };
 
 template<class T>
-bool CConcurrentPtrQueue<T>::IsEmpty() noexcept
+bool CSftmConcurrentPtrQueue<T>::IsEmpty() noexcept
 {
 	return m_nCount == 0;
 }
 
 template<class T>
-bool CConcurrentPtrQueue<T>::TrySteal(CConcurrentPtrQueue& srcQueue) noexcept
+bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept
 {
 	if (!srcQueue.m_nCount || m_nCount)
 		return false;
@@ -75,7 +75,7 @@ bool CConcurrentPtrQueue<T>::TrySteal(CConcurrentPtrQueue& srcQueue) noexcept
 }
 
 template<class T>
-T* CConcurrentPtrQueue<T>::Pop() noexcept
+T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 {
 	std::lock_guard<CSyncPrimitive> lock(m_lock);
 
@@ -89,7 +89,7 @@ T* CConcurrentPtrQueue<T>::Pop() noexcept
 }
 
 template<class T>
-bool CConcurrentPtrQueue<T>::Push(T* pItem, CAfterPushFunc pFunc) noexcept
+bool CSftmConcurrentPtrQueue<T>::Push(T* pItem, CAfterPushFunc pFunc) noexcept
 {
 	if (!pItem)
 		return false;

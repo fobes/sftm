@@ -2,7 +2,7 @@
 #include "Export.h"
 #include <atomic>
 
-class TM_API CSpinLock
+class TM_API CSftmSpinLock
 {
 public:
 	void lock() noexcept;

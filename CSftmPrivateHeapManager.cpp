@@ -1,18 +1,18 @@
-#include "CPrivateHeapManager.h"
+#include "CSftmPrivateHeapManager.h"
 
 #define HEAP_PHYSICAL_SIZE (16*1024*1024)
 
-CPrivateHeapManager::CPrivateHeapManager() noexcept
+CSftmPrivateHeapManager::CSftmPrivateHeapManager() noexcept
 {
 
 }
 
-CPrivateHeapManager::~CPrivateHeapManager()
+CSftmPrivateHeapManager::~CSftmPrivateHeapManager()
 {
 	Release();
 }
 
-bool CPrivateHeapManager::Create() noexcept
+bool CSftmPrivateHeapManager::Create() noexcept
 {
 	m_hHeap = HeapCreate(0, 0, HEAP_PHYSICAL_SIZE);
 
@@ -21,13 +21,13 @@ bool CPrivateHeapManager::Create() noexcept
 	return m_hHeap != NULL;
 }
 
-void CPrivateHeapManager::Release() noexcept
+void CSftmPrivateHeapManager::Release() noexcept
 {
 	if (m_hHeap != nullptr && HeapDestroy(m_hHeap))
 		m_hHeap = nullptr;
 }
 
-void* CPrivateHeapManager::Allocate(size_t nSize) noexcept
+void* CSftmPrivateHeapManager::Allocate(size_t nSize) noexcept
 {
 	PSLIST_ENTRY pFree = InterlockedPopEntrySList(&m_FreeList);
 	while (pFree)
@@ -39,7 +39,7 @@ void* CPrivateHeapManager::Allocate(size_t nSize) noexcept
 	return HeapAlloc(m_hHeap, HEAP_NO_SERIALIZE, nSize);
 }
 
-void CPrivateHeapManager::Free(void* pData) noexcept
+void CSftmPrivateHeapManager::Free(void* pData) noexcept
 {
 	InterlockedPushEntrySList(&m_FreeList, (SLIST_ENTRY*)pData);
 }
