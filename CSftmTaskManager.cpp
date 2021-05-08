@@ -48,13 +48,12 @@ void CSftmTaskManager::Stop() noexcept
 	for (unsigned short nWorker = 1; nWorker < m_nNumberOfWorkers; nWorker++)
 		m_workers[nWorker].Stop();
 
-	m_cvWorkerIdle.notify_all();
-
 	for (unsigned short nWorker = 1; nWorker < m_nNumberOfWorkers; nWorker++)
 	{
 		while (!m_workers[nWorker].IsFinished())
 		{
-
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			m_cvWorkerIdle.notify_all();
 		}
 	}
 
