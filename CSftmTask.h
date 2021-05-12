@@ -23,7 +23,7 @@ public:
 	CSftmChainController* GetChainController() const noexcept;
 
 public:
-	virtual bool Execute(CSftmWorker& worker) noexcept = 0;
+	virtual void Execute(CSftmWorker& worker) noexcept = 0;
 
 protected:
 	CSftmChainController* m_pChainController;
