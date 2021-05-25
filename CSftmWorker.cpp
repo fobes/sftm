@@ -46,6 +46,11 @@ void CSftmWorker::ReleaseResources() noexcept
 	m_rawMemoryManager.Release();
 }
 
+CSftmTaskManager* CSftmWorker::GetManager() const noexcept
+{
+	return m_pTaskManager;
+}
+
 CSftmWorker* CSftmWorker::GetCurrentThreadWorker() noexcept
 {
 	return (CSftmWorker*)TlsGetValue(CSftmTaskManager::m_nTlsWorker);

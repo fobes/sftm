@@ -22,6 +22,8 @@ public:
 	void ReleaseResources() noexcept;
 
 public:
+	CSftmTaskManager* GetManager() const noexcept;
+
 	static CSftmWorker* GetCurrentThreadWorker() noexcept;
 	int GetWorkerIndex() const noexcept;
 	bool IsFinished() const noexcept;
