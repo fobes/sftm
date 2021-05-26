@@ -5,7 +5,7 @@ System for management your concurrent tasks. Object-oriented programming. Thread
 Use Visual Studio 2019 for building.
 
 Starting:
-```
+```c++
 CSftmTaskManager& tm = CSftmTaskManager::GetInstance();
 
 const auto nWorkersCount = std::thread::hardware_concurrency();
@@ -13,7 +13,7 @@ if (!tm.Start(nWorkersCount, []() {}))
     return;
 ```
 Test task:
-```
+```c++
 class CTestTask : public CSftmTask
 {
 public:
@@ -32,7 +32,7 @@ public:
 };
 ```
 Push sync task:
-```
+```c++
 auto pCurrentWorker = CSftmWorker::GetCurrentThreadWorker();
 
 CSftmChainController chainController;
@@ -40,12 +40,12 @@ pCurrentWorker->PushTask(new CTestTask(&chainController));
 pCurrentWorker->WorkUntil(chainController);
 ```
 Push async task:
-```
+```c++
 auto pCurrentWorker = CSftmWorker::GetCurrentThreadWorker();
 
 pCurrentWorker->PushTask(new CTestTask(nullptr));
 ```
 Stopping:
-```
+```c++
 CSftmTaskManager::GetInstance().Stop();
 ```
