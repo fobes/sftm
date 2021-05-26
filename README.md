@@ -16,14 +16,16 @@ Test task:
 class CTestTask : public CSftmTask
 {
 public:
-    CSyncEndTask(CSftmChainController* pChainController) :CSftmTask(pChainController) {}
+    CTestTask(CSftmChainController* pChainController) :CSftmTask(pChainController) {}
     virtual ~CSyncEndTask() {}
 
 public:
     virtual void Execute(CSftmWorker& worker) noexcept override
     {
-        nExecutedSyncTasks++;
-
+        /*
+        Your code...
+        */
+        
         delete this;
     }
 };
