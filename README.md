@@ -1,6 +1,6 @@
 # sftm
 Simple fast task manager. 
-System for management your concurrent tasks. Object-oriented programming. Thread pool based. Custom memory allocators.
+System for management your concurrent tasks. Object-oriented programming. Thread pool based. Custom memory allocators. No third party dependencies.
 
 Use Visual Studio 2019 for building.
 
