@@ -43,7 +43,7 @@ Push async task:
 ```
 auto pCurrentWorker = CSftmWorker::GetCurrentThreadWorker();
 
-pCurrentWorker->PushTask(new CTestTask(&chainController));
+pCurrentWorker->PushTask(new CTestTask(nullptr));
 ```
 Stopping:
 ```
