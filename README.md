@@ -1,5 +1,5 @@
 # sftm
-Simple fast task manager
+Simple fast task manager based on thread pool with own allocators.
 
 Use Visual Studio 2019 for building.
 
