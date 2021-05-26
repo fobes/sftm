@@ -18,7 +18,7 @@ class CTestTask : public CSftmTask
 {
 public:
     CTestTask(CSftmChainController* pChainController) :CSftmTask(pChainController) {}
-    virtual ~CSyncEndTask() {}
+    virtual ~CTestTask() {}
 
 public:
     virtual void Execute(CSftmWorker& worker) noexcept override
