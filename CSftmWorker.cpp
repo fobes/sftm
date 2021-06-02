@@ -153,15 +153,15 @@ void CSftmWorker::DoWork() noexcept
 	{
 		while (CSftmTask *pTask = m_taskQueue.Pop())
 		{
-			if (pTask->GetType() == CSftmTask::ESync)
+			CSftmChainController* pLastController = m_pCurrentChainController;
+
+			if (pTask->GetType() == CSftmTask::ETaskType::ESync)
 			{
-				CSftmChainController* pLastController = m_pCurrentChainController;
 				m_pCurrentChainController = pTask->GetChainController();
 
 				pTask->Execute(*this);
 
 				m_pCurrentChainController->Reduce();
-				m_pCurrentChainController = pLastController;
 			}
 			else
 			{
@@ -169,6 +169,8 @@ void CSftmWorker::DoWork() noexcept
 
 				pTask->Execute(*this);
 			}
+
+			m_pCurrentChainController = pLastController;
 		}
 	} 
 	while (FindWork());

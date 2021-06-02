@@ -7,7 +7,7 @@ class CSftmWorker;
 class TM_API CSftmTask : public CSftmTaskAllocator
 {
 public:
-	enum ETaskType { ESync = 0, EAsync = 1 };
+	enum class ETaskType { ESync = 0, EAsync = 1 };
 
 public:
 	CSftmTask(CSftmChainController* pChainController) noexcept;
