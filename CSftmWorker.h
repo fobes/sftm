@@ -50,13 +50,13 @@ private:
 private:
 	CSftmTaskManager* m_pTaskManager = { nullptr };
 
-	std::thread m_thread;
-	volatile bool m_bFinished = { false };
-	volatile bool m_bStopping = { true };
+	std::thread		m_thread;
+	volatile bool	m_bFinished = { false };
+	volatile bool	m_bStopping = { true };
 
-	CSftmConcurrentPtrQueue<CSftmTask> m_taskQueue;
-	CSftmChainController* m_pCurrentChainController = { nullptr };
+	CSftmConcurrentPtrQueue<CSftmTask>	m_taskQueue;
+	CSftmChainController*				m_pCurrentChainController = { nullptr };
 
-	CSftmPrivateHeapManager m_privateHeapManager;
-	CSftmRawMemoryManager m_rawMemoryManager;
+	CSftmPrivateHeapManager	m_privateHeapManager;
+	CSftmRawMemoryManager	m_rawMemoryManager;
 };

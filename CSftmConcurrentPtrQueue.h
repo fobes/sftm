@@ -30,7 +30,7 @@ public:
 
 private:
 	T* m_pItems[QUEUE_PHYSICAL_SIZE] = { nullptr };
-	unsigned short m_nCount = { 0 };
+	unsigned m_nCount = { 0 };
 
 	CSyncPrimitive m_lock;
 };

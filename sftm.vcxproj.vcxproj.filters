@@ -16,7 +16,6 @@
     <ClCompile Include="CSftmWorker.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="CSftmPrivateHeapManager.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>

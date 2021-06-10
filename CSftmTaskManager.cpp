@@ -59,8 +59,6 @@ void CSftmTaskManager::Stop() noexcept
 
 	TlsFree(m_nTlsWorker);
 	m_nTlsWorker = TLS_OUT_OF_INDEXES;
-
-	m_nNumberOfWorkers = 0;
 }
 
 bool CSftmTaskManager::AddWorker() noexcept
@@ -89,7 +87,7 @@ void CSftmTaskManager::RemoveWorker() noexcept
 	m_nNumberOfWorkers--;
 }
 
-unsigned short CSftmTaskManager::GetWorkersCount() const noexcept
+unsigned CSftmTaskManager::GetWorkersCount() const noexcept
 {
 	return m_nNumberOfWorkers;
 }

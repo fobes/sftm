@@ -29,11 +29,11 @@ public:
 	bool AddWorker() noexcept;
 	void RemoveWorker() noexcept;
 
-	unsigned short GetWorkersCount() const noexcept;
+	unsigned GetWorkersCount() const noexcept;
 
 private:
 	std::array<CSftmWorker, MAX_WORKERS> m_workers;
-	unsigned short m_nNumberOfWorkers;
+	unsigned m_nNumberOfWorkers;
 
 	CWorkerFirstFunc m_workerFirstFunc;
 
