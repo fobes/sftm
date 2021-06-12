@@ -44,7 +44,7 @@ private:
 	bool FindWork() noexcept;
 
 	void ThreadFunc() noexcept;
-	void DoWork() noexcept;
+	void DoWork(CSftmChainController* pChainController) noexcept;
 	void Idle() noexcept;
 
 private:

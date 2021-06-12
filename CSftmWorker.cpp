@@ -74,7 +74,7 @@ void CSftmWorker::ThreadFunc() noexcept
 
 	while (!m_bStopping)
 	{
-		DoWork();
+		DoWork(nullptr);
 		
 		Idle();
 	}
@@ -134,7 +134,7 @@ bool CSftmWorker::FindWork() noexcept
 void CSftmWorker::WorkUntil(CSftmChainController &chainController) noexcept
 {
 	while (!chainController.IsFinished())
-		DoWork();
+		DoWork(&chainController);
 }
 
 CSftmPrivateHeapManager& CSftmWorker::GetPrivateHeapManager() noexcept
@@ -147,7 +147,7 @@ CSftmRawMemoryManager& CSftmWorker::GetRawMemoryManager() noexcept
 	return m_rawMemoryManager;
 }
 
-void CSftmWorker::DoWork() noexcept
+void CSftmWorker::DoWork(CSftmChainController *pChainController) noexcept
 {
 	do
 	{
@@ -171,6 +171,9 @@ void CSftmWorker::DoWork() noexcept
 			}
 
 			m_pCurrentChainController = pLastController;
+
+			if(pChainController && pChainController->IsFinished())
+				return;
 		}
 	} 
 	while (FindWork());
