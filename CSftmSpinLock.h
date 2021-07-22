@@ -6,8 +6,6 @@ class TM_API CSftmSpinLock
 {
 public:
 	void lock() noexcept;
-	bool try_lock() noexcept;
-
 	void unlock() noexcept;
 
 private:

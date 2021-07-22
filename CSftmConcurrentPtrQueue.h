@@ -1,10 +1,11 @@
 #pragma once
 #include "CSftmSpinLock.h"
+#include "CSftmCriticalSectionLock.h"
 #include <mutex>
 #include <functional>
 
 #define QUEUE_PHYSICAL_SIZE 512
-using CSyncPrimitive = CSftmSpinLock;
+using CSyncPrimitive = CSftmCriticalSectionLock;
 
 template<class T>
 class CSftmConcurrentPtrQueue

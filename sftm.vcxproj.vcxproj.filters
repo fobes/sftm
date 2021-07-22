@@ -25,6 +25,9 @@
     <ClCompile Include="CSftmSpinLock.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSftmCriticalSectionLock.cpp">
+      <Filter>Utils\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSftmTask.h">
@@ -56,6 +59,9 @@
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Export.h" />
+    <ClInclude Include="CSftmCriticalSectionLock.h">
+      <Filter>Utils\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
