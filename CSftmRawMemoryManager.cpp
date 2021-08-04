@@ -18,7 +18,7 @@ bool CSftmRawMemoryManager::Create() noexcept
 	m_pMemory = new char[WORKER_RAW_MEMORY_SIZE];
 	m_nUsedCount = 0;
 
-	return m_pMemory != NULL;
+	return m_pMemory != nullptr;
 }
 
 void CSftmRawMemoryManager::Release() noexcept
@@ -32,7 +32,7 @@ void CSftmRawMemoryManager::Release() noexcept
 void* CSftmRawMemoryManager::Allocate(size_t nSize) noexcept
 {
 	if (m_nUsedCount + nSize > WORKER_RAW_MEMORY_SIZE)
-		return NULL;
+		return nullptr;
 
 	char* ptr = m_pMemory + m_nUsedCount;
 	m_nUsedCount += nSize;

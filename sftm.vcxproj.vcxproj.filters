@@ -28,6 +28,9 @@
     <ClCompile Include="CSftmCriticalSectionLock.cpp">
       <Filter>Utils\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CProfiler.cpp">
+      <Filter>Utils\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSftmTask.h">
@@ -60,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="Export.h" />
     <ClInclude Include="CSftmCriticalSectionLock.h">
+      <Filter>Utils\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CProfiler.h">
       <Filter>Utils\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

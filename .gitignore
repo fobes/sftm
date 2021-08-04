@@ -7,4 +7,6 @@
 /Win32/*
 /Debug/*
 /Release/*
+/Release_Profiler
 *.vcxproj.user
+/.vs/*

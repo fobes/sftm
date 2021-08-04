@@ -18,7 +18,7 @@ bool CSftmPrivateHeapManager::Create() noexcept
 
 	InitializeSListHead(&m_FreeList);
 
-	return m_hHeap != NULL;
+	return m_hHeap != nullptr;
 }
 
 void CSftmPrivateHeapManager::Release() noexcept

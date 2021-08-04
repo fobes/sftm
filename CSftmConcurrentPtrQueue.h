@@ -54,15 +54,14 @@ bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noe
 	if (!srcQueue.m_nCount || m_nCount)
 		return false;
 
-	unsigned nGrabCount = (srcQueue.m_nCount + 1) / 2;
-
+	const unsigned nGrabCount = (srcQueue.m_nCount + 1) / 2;
 
 	unsigned nTask;
 	T** p = m_pItems;
 	for (nTask = 0; nTask < nGrabCount; nTask++)
 	{
 		*p++ = srcQueue.m_pItems[nTask];
-		srcQueue.m_pItems[nTask] = NULL;
+		srcQueue.m_pItems[nTask] = nullptr;
 	}
 	m_nCount = nGrabCount;
 
@@ -81,7 +80,7 @@ T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 	std::lock_guard<CSyncPrimitive> lock(m_lock);
 
 	if (!m_nCount)
-		return NULL;
+		return nullptr;
 
 	T* pTask = m_pItems[m_nCount - 1];
 	m_nCount--;

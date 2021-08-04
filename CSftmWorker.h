@@ -4,6 +4,9 @@
 #include "CSftmPrivateHeapManager.h"
 #include "CSftmRawMemoryManager.h"
 #include "CSftmTask.h"
+#ifdef _PROFILE
+#include "CProfiler.h"
+#endif
 
 class CSftmTaskManager;
 
@@ -59,4 +62,8 @@ private:
 
 	CSftmPrivateHeapManager	m_privateHeapManager;
 	CSftmRawMemoryManager	m_rawMemoryManager;
+
+#ifdef _PROFILE
+	CProfiler m_profiler;
+#endif
 };

@@ -32,6 +32,11 @@ public:
 	unsigned GetWorkersCount() const noexcept;
 
 private:
+#ifdef _PROFILE
+	void SaveFileProfiler() noexcept;
+#endif
+
+private:
 	std::array<CSftmWorker, MAX_WORKERS> m_workers;
 	unsigned m_nNumberOfWorkers;
 

@@ -113,6 +113,10 @@ CSftmChainController* CSftmWorker::GetCurrentChainController() noexcept
 
 bool CSftmWorker::FindWork() noexcept
 {
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::ETaskFinding);
+#endif
+
 	int nOffset = (GetWorkerIndex() + GetTickCount64()) % m_pTaskManager->m_nNumberOfWorkers;
 
 	for (unsigned nWorker = 0; nWorker < m_pTaskManager->m_nNumberOfWorkers; nWorker++)
@@ -122,11 +126,27 @@ bool CSftmWorker::FindWork() noexcept
 			continue;
 
 		if (m_taskQueue.TrySteal(pWorker->m_taskQueue))
+		{
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
+
 			return true;
+		}
 
 		if (!m_taskQueue.IsEmpty())
+		{
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
+			
 			return true;
+		}
 	}
+
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
 
 	return false;
 }
@@ -159,7 +179,15 @@ void CSftmWorker::DoWork(CSftmChainController *pChainController) noexcept
 			{
 				m_pCurrentChainController = pTask->GetChainController();
 
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::ESyncTaskExecution);
+#endif
+
 				pTask->Execute(*this);
+
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
 
 				m_pCurrentChainController->Reduce();
 			}
@@ -167,7 +195,15 @@ void CSftmWorker::DoWork(CSftmChainController *pChainController) noexcept
 			{
 				m_pCurrentChainController = nullptr;
 
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::ESyncTaskExecution);
+#endif
+
 				pTask->Execute(*this);
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
+
 			}
 
 			m_pCurrentChainController = pLastController;
@@ -181,6 +217,14 @@ void CSftmWorker::DoWork(CSftmChainController *pChainController) noexcept
 
 void CSftmWorker::Idle() noexcept
 {
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::EIdle);
+#endif
+
 	std::unique_lock<std::mutex> lock(m_pTaskManager->m_mtxWorkerIdle);
 	m_pTaskManager->m_cvWorkerIdle.wait(lock);
+
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
 }

@@ -1,4 +1,5 @@
 #include "CSftmTaskManager.h"
+#include <filesystem>
 
 DWORD CSftmTaskManager::m_nTlsWorker;
 
@@ -10,6 +11,10 @@ CSftmTaskManager::CSftmTaskManager() noexcept :m_nNumberOfWorkers(0)
 CSftmTaskManager::~CSftmTaskManager()
 {
 	Stop();
+
+#ifdef _PROFILE
+	SaveFileProfiler();
+#endif
 }
 
 CSftmTaskManager& CSftmTaskManager::GetInstance() noexcept
@@ -39,6 +44,10 @@ bool CSftmTaskManager::Start(unsigned short nNumberOfWorkers, CWorkerFirstFunc&&
 		if (!AddWorker())
 			return false;
 	}
+
+#ifdef _PROFILE
+	CProfiler::CollectNullTime();
+#endif
 
 	return true;
 }
@@ -91,3 +100,24 @@ unsigned CSftmTaskManager::GetWorkersCount() const noexcept
 {
 	return m_nNumberOfWorkers;
 }
+
+#ifdef _PROFILE
+void CSftmTaskManager::SaveFileProfiler() noexcept
+{
+	const auto outFilePath = std::filesystem::current_path() / "sftm_profiler.xml";
+
+	std::ofstream file;
+	file.open(outFilePath);
+	file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	file << "\n<root>";
+
+	for (unsigned nWorker = 0; nWorker < m_nNumberOfWorkers; nWorker++)
+	{
+		m_workers[nWorker].m_profiler.Save(file, nWorker);
+	}
+
+	file << "<\n/root>";
+
+	file.close();
+}
+#endif
