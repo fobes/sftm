@@ -54,7 +54,7 @@ bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noe
 	if (!srcQueue.m_nCount || m_nCount)
 		return false;
 
-	const unsigned nGrabCount = (srcQueue.m_nCount + 1) / 2;
+	const unsigned nGrabCount = 1;
 
 	unsigned nTask;
 	T** p = m_pItems;
