@@ -9,8 +9,6 @@ class TM_API CSftmTaskManager
 {
 	friend CSftmWorker;
 
-	using CWorkerFirstFunc = std::function<void(void)>;
-
 public:
 	CSftmTaskManager() noexcept;
 	CSftmTaskManager(const CSftmTaskManager&) = delete;
@@ -23,13 +21,15 @@ public:
 	static CSftmTaskManager& GetInstance() noexcept;
 
 public:
-	bool Start(unsigned short nNumberOfWorkers, CWorkerFirstFunc&& workerFirstFunc) noexcept;
+	bool Start(unsigned short nNumberOfWorkers) noexcept;
 	void Stop() noexcept;
 
 	bool AddWorker() noexcept;
 	void RemoveWorker() noexcept;
 
 	unsigned GetWorkersCount() const noexcept;
+
+	void RunProfiling() noexcept;
 
 private:
 #ifdef _PROFILE
@@ -38,9 +38,7 @@ private:
 
 private:
 	std::array<CSftmWorker, MAX_WORKERS> m_workers;
-	unsigned m_nNumberOfWorkers;
-
-	CWorkerFirstFunc m_workerFirstFunc;
+	unsigned m_nWorkerCount = 0;
 
 private:
 	std::condition_variable m_cvWorkerIdle;

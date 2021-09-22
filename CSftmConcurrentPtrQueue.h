@@ -5,14 +5,13 @@
 #include <functional>
 
 #define QUEUE_PHYSICAL_SIZE 512
+//using CSyncPrimitive = std::mutex;
 using CSyncPrimitive = CSftmCriticalSectionLock;
+//using CSyncPrimitive = CSftmSpinLock;
 
 template<class T>
 class CSftmConcurrentPtrQueue
 {
-public:
-	using CAfterPushFunc = void (*)(T* item);
-
 public:
 	CSftmConcurrentPtrQueue() noexcept {}
 	CSftmConcurrentPtrQueue(const CSftmConcurrentPtrQueue&) = delete;
@@ -22,7 +21,7 @@ public:
 	~CSftmConcurrentPtrQueue() {}
 
 public:
-	bool Push(T* pItem, CAfterPushFunc pFunc) noexcept;
+	bool Push(T* pItem) noexcept;
 	T* Pop() noexcept;
 
 	bool TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept;
@@ -89,21 +88,14 @@ T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 }
 
 template<class T>
-bool CSftmConcurrentPtrQueue<T>::Push(T* pItem, CAfterPushFunc pFunc) noexcept
+bool CSftmConcurrentPtrQueue<T>::Push(T* pItem) noexcept
 {
-	if (!pItem)
+	std::lock_guard<CSyncPrimitive> lock(m_lock);
+
+	if (m_nCount >= QUEUE_PHYSICAL_SIZE)
 		return false;
 
-	{
-		std::lock_guard<CSyncPrimitive> lock(m_lock);
-
-		if (m_nCount >= QUEUE_PHYSICAL_SIZE)
-			return false;
-
-		m_pItems[m_nCount++] = pItem;
-
-		pFunc(pItem);
-	}
+	m_pItems[m_nCount++] = pItem;
 
 	return true;
 }

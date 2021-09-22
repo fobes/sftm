@@ -22,8 +22,8 @@ bool CSftmWorker::Start(CSftmTaskManager *pTaskManager) noexcept
 
 	m_bStopping = false;
 
-	m_thread = std::thread(std::bind(&CSftmWorker::ThreadFunc, this));
-	m_thread.detach();
+	std::thread thread = std::thread(std::bind(&CSftmWorker::ThreadFunc, this));
+	thread.detach();
 
 	return true;
 }
@@ -40,15 +40,8 @@ void CSftmWorker::ReleaseResources() noexcept
 	m_bFinished = false;
 	m_bStopping = true;
 
-	m_pCurrentChainController = nullptr;
-
 	m_privateHeapManager.Release();
 	m_rawMemoryManager.Release();
-}
-
-CSftmTaskManager* CSftmWorker::GetManager() const noexcept
-{
-	return m_pTaskManager;
 }
 
 CSftmWorker* CSftmWorker::GetCurrentThreadWorker() noexcept
@@ -56,25 +49,25 @@ CSftmWorker* CSftmWorker::GetCurrentThreadWorker() noexcept
 	return (CSftmWorker*)TlsGetValue(CSftmTaskManager::m_nTlsWorker);
 }
 
-int CSftmWorker::GetWorkerIndex() const noexcept
-{
-	return int(this - &m_pTaskManager->m_workers[0]);
-}
-
 bool CSftmWorker::IsFinished() const noexcept
 {
 	return m_bFinished;
 }
 
+void CSftmWorker::RunProfiling() noexcept
+{
+#ifdef _PROFILE
+	m_profiler.Run();
+#endif
+}
+
 void CSftmWorker::ThreadFunc() noexcept
 {
-	m_pTaskManager->m_workerFirstFunc();
-
 	TlsSetValue(m_pTaskManager->m_nTlsWorker, this);
 
 	while (!m_bStopping)
 	{
-		DoWork(nullptr);
+		DoWork();
 		
 		Idle();
 	}
@@ -92,36 +85,28 @@ bool CSftmWorker::Init(CSftmTaskManager *pTaskManager) noexcept
 
 bool CSftmWorker::PushTask(CSftmTask *pTask) noexcept
 {
-	if (!pTask)
-		return false;
+	CSftmChainController* pChainController = pTask->GetChainController();
+	if (pChainController)
+		pChainController->Increase();
 
-	bool bResult = m_taskQueue.Push(pTask, [](CSftmTask* pTask) noexcept {
-		auto pController = pTask->GetChainController();
-		if (pController)
-			pController->Increase();
-	});
+	bool bResult = m_taskQueue.Push(pTask);
 
 	m_pTaskManager->m_cvWorkerIdle.notify_one();
 
 	return bResult;
 }
 
-CSftmChainController* CSftmWorker::GetCurrentChainController() noexcept
-{
-	return m_pCurrentChainController;
-}
-
 bool CSftmWorker::FindWork() noexcept
 {
 #ifdef _PROFILE
-	START_PROFILE(CProfiler::CItem::EType::ETaskFinding);
+	START_PROFILE(CProfiler::CItem::EType::ETaskFinding, 0);
 #endif
 
-	int nOffset = (GetWorkerIndex() + GetTickCount64()) % m_pTaskManager->m_nNumberOfWorkers;
+	const int nOffset = (int(this - &m_pTaskManager->m_workers[0]) + GetTickCount64()) % m_pTaskManager->m_nWorkerCount;
 
-	for (unsigned nWorker = 0; nWorker < m_pTaskManager->m_nNumberOfWorkers; nWorker++)
+	for (unsigned nWorker = 0; nWorker < m_pTaskManager->m_nWorkerCount; nWorker++)
 	{
-		CSftmWorker* pWorker = &m_pTaskManager->m_workers[(nWorker + nOffset) % m_pTaskManager->m_nNumberOfWorkers];
+		CSftmWorker* pWorker = &m_pTaskManager->m_workers[(nWorker + nOffset) % m_pTaskManager->m_nWorkerCount];
 		if (pWorker == this) 
 			continue;
 
@@ -131,15 +116,6 @@ bool CSftmWorker::FindWork() noexcept
 	END_PROFILE();
 #endif
 
-			return true;
-		}
-
-		if (!m_taskQueue.IsEmpty())
-		{
-#ifdef _PROFILE
-	END_PROFILE();
-#endif
-			
 			return true;
 		}
 	}
@@ -154,71 +130,70 @@ bool CSftmWorker::FindWork() noexcept
 void CSftmWorker::WorkUntil(CSftmChainController &chainController) noexcept
 {
 	while (!chainController.IsFinished())
-		DoWork(&chainController);
+	{
+		do
+		{
+			while (CSftmTask* pTask = PopTask())
+			{
+				ExecuteTask(pTask);
+
+				if (chainController.IsFinished())
+					return;
+			}
+		} 
+		while (FindWork());
+	}
 }
 
-CSftmPrivateHeapManager& CSftmWorker::GetPrivateHeapManager() noexcept
-{
-	return m_privateHeapManager;
-}
-
-CSftmRawMemoryManager& CSftmWorker::GetRawMemoryManager() noexcept
-{
-	return m_rawMemoryManager;
-}
-
-void CSftmWorker::DoWork(CSftmChainController *pChainController) noexcept
+void CSftmWorker::DoWork() noexcept
 {
 	do
 	{
-		while (CSftmTask *pTask = m_taskQueue.Pop())
+		while (CSftmTask *pTask = PopTask())
 		{
-			CSftmChainController* pLastController = m_pCurrentChainController;
-
-			if (pTask->GetType() == CSftmTask::ETaskType::ESync)
-			{
-				m_pCurrentChainController = pTask->GetChainController();
-
-#ifdef _PROFILE
-	START_PROFILE(CProfiler::CItem::EType::ESyncTaskExecution);
-#endif
-
-				pTask->Execute(*this);
-
-#ifdef _PROFILE
-	END_PROFILE();
-#endif
-
-				m_pCurrentChainController->Reduce();
-			}
-			else
-			{
-				m_pCurrentChainController = nullptr;
-
-#ifdef _PROFILE
-	START_PROFILE(CProfiler::CItem::EType::ESyncTaskExecution);
-#endif
-
-				pTask->Execute(*this);
-#ifdef _PROFILE
-	END_PROFILE();
-#endif
-
-			}
-
-			m_pCurrentChainController = pLastController;
-
-			if(pChainController && pChainController->IsFinished())
-				return;
+			ExecuteTask(pTask);
 		}
 	} 
 	while (FindWork());
 }
 
+CSftmTask* CSftmWorker::PopTask() noexcept
+{
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::ETaskPop, 0);
+#endif
+
+	CSftmTask* pTask = m_taskQueue.Pop();
+
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
+
+	return pTask;
+}
+
+void CSftmWorker::ExecuteTask(CSftmTask* pTask) noexcept
+{
+	CSftmChainController* pTaskChainController = pTask->GetChainController();
+
+#ifdef _PROFILE
+	START_PROFILE(CProfiler::CItem::EType::ETaskExecution, pTask->GetUniqueIndex());
+#endif
+
+	pTask->Execute(*this);
+
+#ifdef _PROFILE
+	END_PROFILE();
+#endif
+
+	if (pTaskChainController)
+		pTaskChainController->Reduce();
+}
+
 void CSftmWorker::Idle() noexcept
 {
 #ifdef _PROFILE
-	START_PROFILE(CProfiler::CItem::EType::EIdle);
+	START_PROFILE(CProfiler::CItem::EType::EIdle, 0);
 #endif
 
 	std::unique_lock<std::mutex> lock(m_pTaskManager->m_mtxWorkerIdle);

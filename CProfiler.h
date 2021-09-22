@@ -10,9 +10,10 @@ public:
 	struct CItem
 	{
 		using TimeStamp = long long;
-		enum class EType { EAsyncTaskExecution = 0, ESyncTaskExecution = 1, EIdle = 2, ETaskFinding = 3 };
+		enum class EType { ETaskPop = 0, ETaskExecution = 1, ETaskFinding = 2, EIdle = 3 };
 
 		EType		m_type;
+		unsigned	m_nIndex;
 		TimeStamp	m_nStartTime;
 		TimeStamp	m_nEndTime;
 	};
@@ -22,29 +23,26 @@ public:
 	~CProfiler();
 
 public:
+	void Run() noexcept;
+
 	void InsertItem(const CItem& item) noexcept;
 
 	void Save(std::ofstream& file, unsigned nThread) noexcept;
 
-public:
-	static void CollectNullTime() noexcept;
-
 private:
-	static CProfiler::CItem::TimeStamp m_nullTime;
+	std::atomic<bool> m_collect = false;
 
 	std::vector<CItem>	m_items;
 };
 
-#define START_PROFILE(EType)																														\
-	CProfiler::CItem item;																															\
-	item.m_type = EType;																															\
+#define START_PROFILE(EType, Idx)																														\
+	CProfiler::CItem item;																																\
+	item.m_type = EType;																																\
+	item.m_nIndex = Idx;																																\
 	item.m_nStartTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
 #define END_PROFILE()																																\
 	item.m_nEndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();	\
 	m_profiler.InsertItem(item);
-
-#define COLLECT_NULL_TIME()																															\
-	m_nullTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
 #endif

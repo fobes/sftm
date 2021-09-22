@@ -4,8 +4,6 @@
 
 #ifdef _PROFILE
 
-CProfiler::CItem::TimeStamp CProfiler::m_nullTime = 0;
-
 CProfiler::CProfiler() noexcept
 {
 
@@ -16,8 +14,16 @@ CProfiler::~CProfiler()
 
 }
 
+void CProfiler::Run() noexcept
+{
+	m_collect.store(!m_collect.load());
+}
+
 void CProfiler::InsertItem(const CItem& item) noexcept
 {
+	if (!m_collect.load())
+		return;
+
 	m_items.push_back(item);
 }
 
@@ -30,16 +36,12 @@ void CProfiler::Save(std::ofstream& file, unsigned nThread) noexcept
 		CItem& item = m_items[n];
 
 		file << "\n<item type=\"" + std::to_string((int)item.m_type) + "\" ";
-		file << "tm_s=\"" + std::to_string(item.m_nStartTime - m_nullTime) + "\" ";
-		file << "tm_e=\"" + std::to_string(item.m_nEndTime - m_nullTime) + "\"/>";
+		file << "idx=\"" + std::to_string(item.m_nIndex) + "\" ";
+		file << "tm_s=\"" + std::to_string(item.m_nStartTime) + "\" ";
+		file << "tm_e=\"" + std::to_string(item.m_nEndTime) + "\"/>";
 	}
 
 	file << "\n</thread>";
-}
-
-void CProfiler::CollectNullTime() noexcept
-{
-	COLLECT_NULL_TIME();
 }
 
 #endif

@@ -1,92 +1,86 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="CSftmTask.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSftmTaskAllocator.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSftmChainController.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CSftmTaskManager.cpp">
-      <Filter>Core\Source Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="CSftmWorker.cpp">
-      <Filter>Core\Source Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="CSftmPrivateHeapManager.cpp">
-      <Filter>Utils\Source Files</Filter>
+    <ClCompile Include="CSftmChainController.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="CSftmRawMemoryManager.cpp">
-      <Filter>Utils\Source Files</Filter>
+    <ClCompile Include="CSftmTask.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="CSftmSpinLock.cpp">
-      <Filter>Utils\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSftmCriticalSectionLock.cpp">
-      <Filter>Utils\Source Files</Filter>
+    <ClCompile Include="CSftmTaskAllocator.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="CProfiler.cpp">
-      <Filter>Utils\Source Files</Filter>
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CSftmSpinLock.cpp">
+      <Filter>Utils\Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="CSftmCriticalSectionLock.cpp">
+      <Filter>Utils\Synchronization</Filter>
+    </ClCompile>
+    <ClCompile Include="CSftmPrivateHeapManager.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CSftmRawMemoryManager.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CSftmTask.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSftmTaskAllocator.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSftmChainController.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Export.h" />
     <ClInclude Include="CSftmTaskManager.h">
-      <Filter>Core\Header Files</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="CSftmWorker.h">
-      <Filter>Core\Header Files</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="CSftmConcurrentPtrQueue.h">
-      <Filter>Utils\Header Files</Filter>
+    <ClInclude Include="CSftmChainController.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="CSftmPrivateHeapManager.h">
-      <Filter>Utils\Header Files</Filter>
+    <ClInclude Include="CSftmTask.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="CSftmRawMemoryManager.h">
-      <Filter>Utils\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSftmSpinLock.h">
-      <Filter>Utils\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Export.h" />
-    <ClInclude Include="CSftmCriticalSectionLock.h">
-      <Filter>Utils\Header Files</Filter>
+    <ClInclude Include="CSftmTaskAllocator.h">
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="CProfiler.h">
-      <Filter>Utils\Header Files</Filter>
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CSftmSpinLock.h">
+      <Filter>Utils\Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="CSftmCriticalSectionLock.h">
+      <Filter>Utils\Synchronization</Filter>
+    </ClInclude>
+    <ClInclude Include="CSftmPrivateHeapManager.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CSftmConcurrentPtrQueue.h">
+      <Filter>Utils\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="CSftmRawMemoryManager.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
       <UniqueIdentifier>{1e0bc0c2-2cf2-418f-88c7-ea8425d62944}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Header Files">
-      <UniqueIdentifier>{75df0e73-3b01-48e9-bec0-01ed894d2138}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Source Files">
-      <UniqueIdentifier>{1dd3f2ef-43dd-47d1-b658-57d49a1d217c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{c38d2e0a-6de6-41e8-af9a-bde4f4fcc832}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Header Files">
-      <UniqueIdentifier>{3a3600d4-0d68-4246-af0f-e1c683677752}</UniqueIdentifier>
+    <Filter Include="Utils\Synchronization">
+      <UniqueIdentifier>{c288f2ba-5634-49a9-825d-96cee108c5dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Source Files">
-      <UniqueIdentifier>{39e086d3-07c5-4d05-83bd-59876fe9e399}</UniqueIdentifier>
+    <Filter Include="Utils\Containers">
+      <UniqueIdentifier>{4f0ea5f8-f922-4d43-9d0b-28b502522177}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
