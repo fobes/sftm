@@ -26,20 +26,12 @@ public:
 
 	bool TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept;
 
-	bool IsEmpty() noexcept;
-
 private:
 	T* m_pItems[QUEUE_PHYSICAL_SIZE] = { nullptr };
 	unsigned m_nCount = { 0 };
 
 	CSyncPrimitive m_lock;
 };
-
-template<class T>
-bool CSftmConcurrentPtrQueue<T>::IsEmpty() noexcept
-{
-	return m_nCount == 0;
-}
 
 template<class T>
 bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept
@@ -76,6 +68,9 @@ bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noe
 template<class T>
 T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 {
+	if (!m_nCount)
+		return nullptr;
+
 	std::lock_guard<CSyncPrimitive> lock(m_lock);
 
 	if (!m_nCount)

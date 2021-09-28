@@ -3,8 +3,6 @@
 #include <functional>
 #include <thread>
 
-#define WORKER_STACK_SIZE 64*1024
-
 CSftmWorker::CSftmWorker() noexcept
 {
 
@@ -174,20 +172,20 @@ CSftmTask* CSftmWorker::PopTask() noexcept
 
 void CSftmWorker::ExecuteTask(CSftmTask* pTask) noexcept
 {
-	CSftmChainController* pTaskChainController = pTask->GetChainController();
-
 #ifdef _PROFILE
 	START_PROFILE(CProfiler::CItem::EType::ETaskExecution, pTask->GetUniqueIndex());
 #endif
 
+	CSftmChainController* pTaskChainController = pTask->GetChainController();
+
 	pTask->Execute(*this);
+
+	if (pTaskChainController)
+		pTaskChainController->Reduce();
 
 #ifdef _PROFILE
 	END_PROFILE();
 #endif
-
-	if (pTaskChainController)
-		pTaskChainController->Reduce();
 }
 
 void CSftmWorker::Idle() noexcept
