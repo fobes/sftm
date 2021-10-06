@@ -248,6 +248,7 @@
     <ClInclude Include="CSftmConcurrentPtrQueue.h" />
     <ClInclude Include="CSftmPrivateHeapManager.h" />
     <ClInclude Include="CSftmRawMemoryManager.h" />
+    <ClInclude Include="CSftmSyncPrimitive.h" />
     <ClInclude Include="CSftmTask.h" />
     <ClInclude Include="CSftmTaskAllocator.h" />
     <ClInclude Include="CSftmChainController.h" />

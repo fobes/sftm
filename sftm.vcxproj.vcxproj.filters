@@ -68,6 +68,9 @@
     <ClInclude Include="CSftmRawMemoryManager.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="CSftmSyncPrimitive.h">
+      <Filter>Utils\Synchronization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">

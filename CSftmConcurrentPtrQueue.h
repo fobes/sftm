@@ -1,13 +1,7 @@
 #pragma once
-#include "CSftmSpinLock.h"
-#include "CSftmCriticalSectionLock.h"
-#include <mutex>
-#include <functional>
+#include "CSftmSyncPrimitive.h"
 
 #define QUEUE_PHYSICAL_SIZE 512
-//using CSyncPrimitive = std::mutex;
-using CSyncPrimitive = CSftmCriticalSectionLock;
-//using CSyncPrimitive = CSftmSpinLock;
 
 template<class T>
 class CSftmConcurrentPtrQueue
@@ -30,37 +24,30 @@ private:
 	T* m_pItems[QUEUE_PHYSICAL_SIZE] = { nullptr };
 	unsigned m_nCount = { 0 };
 
-	CSyncPrimitive m_lock;
+	CSftmSyncPrimitive m_lock;
 };
 
 template<class T>
 bool CSftmConcurrentPtrQueue<T>::TrySteal(CSftmConcurrentPtrQueue& srcQueue) noexcept
 {
-	if (!srcQueue.m_nCount || m_nCount)
+	if (!srcQueue.m_nCount)
 		return false;
 
-	std::lock_guard<CSyncPrimitive> lock(srcQueue.m_lock);
-	std::lock_guard<CSyncPrimitive> lockIdleThread(m_lock);
+	T* pItem = nullptr;
 
-	if (!srcQueue.m_nCount || m_nCount)
-		return false;
-
-	const unsigned nGrabCount = 1;
-
-	unsigned nTask;
-	T** p = m_pItems;
-	for (nTask = 0; nTask < nGrabCount; nTask++)
 	{
-		*p++ = srcQueue.m_pItems[nTask];
-		srcQueue.m_pItems[nTask] = nullptr;
+		std::lock_guard<CSftmSyncPrimitive> srcLock(srcQueue.m_lock);
+		if (!srcQueue.m_nCount)
+			return false;
+
+		pItem = srcQueue.m_pItems[srcQueue.m_nCount - 1];
+		srcQueue.m_pItems[srcQueue.m_nCount - 1] = nullptr;
+		srcQueue.m_nCount--;
 	}
-	m_nCount = nGrabCount;
 
-	p = srcQueue.m_pItems;
-	for (; nTask < srcQueue.m_nCount; nTask++)
-		*p++ = srcQueue.m_pItems[nTask];
+	std::lock_guard<CSftmSyncPrimitive> currentLock(m_lock);
 
-	srcQueue.m_nCount -= nGrabCount;
+	m_pItems[m_nCount++] = pItem;
 
 	return true;
 }
@@ -71,7 +58,7 @@ T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 	if (!m_nCount)
 		return nullptr;
 
-	std::lock_guard<CSyncPrimitive> lock(m_lock);
+	std::lock_guard<CSftmSyncPrimitive> lock(m_lock);
 
 	if (!m_nCount)
 		return nullptr;
@@ -85,7 +72,7 @@ T* CSftmConcurrentPtrQueue<T>::Pop() noexcept
 template<class T>
 bool CSftmConcurrentPtrQueue<T>::Push(T* pItem) noexcept
 {
-	std::lock_guard<CSyncPrimitive> lock(m_lock);
+	std::lock_guard<CSftmSyncPrimitive> lock(m_lock);
 
 	if (m_nCount >= QUEUE_PHYSICAL_SIZE)
 		return false;
