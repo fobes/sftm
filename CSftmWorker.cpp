@@ -83,9 +83,7 @@ bool CSftmWorker::Init(CSftmTaskManager *pTaskManager) noexcept
 
 bool CSftmWorker::PushTask(CSftmTask *pTask) noexcept
 {
-	CSftmChainController* pChainController = pTask->GetChainController();
-	if (pChainController)
-		pChainController->Increase();
+	pTask->m_chainController.Increase();
 
 	bool bResult = m_taskQueue.Push(pTask);
 
@@ -176,12 +174,9 @@ void CSftmWorker::ExecuteTask(CSftmTask* pTask) noexcept
 	START_PROFILE(CProfiler::CItem::EType::ETaskExecution, pTask->GetUniqueIndex());
 #endif
 
-	CSftmChainController* pTaskChainController = pTask->GetChainController();
-
 	pTask->Execute(*this);
 
-	if (pTaskChainController)
-		pTaskChainController->Reduce();
+	pTask->m_chainController.Reduce();
 
 #ifdef _PROFILE
 	END_PROFILE();

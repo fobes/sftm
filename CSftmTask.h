@@ -7,7 +7,7 @@ class CSftmWorker;
 class TM_API CSftmTask : public CSftmTaskAllocator
 {
 public:
-	CSftmTask(CSftmChainController* pChainController) noexcept;
+	CSftmTask(CSftmChainController& cc) noexcept;
 	CSftmTask() = delete;
 	CSftmTask(const CSftmTask&) = delete;
 	void operator=(const CSftmTask&) = delete;
@@ -16,13 +16,10 @@ public:
 	virtual ~CSftmTask();
 
 public:
-	CSftmChainController* GetChainController() const noexcept;
-
-public:
 	virtual void Execute(CSftmWorker& worker) noexcept = 0;
 
 	virtual unsigned GetUniqueIndex() const noexcept = 0;
 
-protected:
-	CSftmChainController* m_pChainController;
+public:
+	CSftmChainController& m_chainController;
 };
