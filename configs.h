@@ -1,4 +1,4 @@
-#define MAX_WORKERS			128
+﻿#define MAX_WORKERS			128
 
 #define QUEUE_PHYSICAL_SIZE 512
 

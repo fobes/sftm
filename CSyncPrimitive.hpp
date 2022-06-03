@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <mutex>
 //#include "CCriticalSectionLock.hpp"
 //#include "CSpinLock.hpp"

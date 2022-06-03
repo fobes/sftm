@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CConcurrentPtrQueue.hpp"
 #include "CTask.hpp"
 #include <thread>

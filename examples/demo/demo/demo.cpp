@@ -1,4 +1,4 @@
-#include <iostream>
+Ôªø#include <iostream>
 #include "CTaskManager.hpp"
 #include "Utils.hpp"
 #include <chrono>
@@ -17,7 +17,7 @@ int main()
 	class CSyncEndTask : public sftm::CTask
 	{
 	public:
-		CSyncEndTask(sftm::CChainController& ÒhainController) :sftm::CTask(ÒhainController) {}
+		CSyncEndTask(sftm::CChainController& —ÅhainController) :sftm::CTask(—ÅhainController) {}
 		virtual ~CSyncEndTask() {}
 
 	public:
@@ -29,7 +29,7 @@ int main()
 	class CSyncMidTask : public sftm::CTask
 	{
 	public:
-		CSyncMidTask(sftm::CChainController& ÒhainController) :sftm::CTask(ÒhainController) {}
+		CSyncMidTask(sftm::CChainController& —ÅhainController) :sftm::CTask(—ÅhainController) {}
 		virtual ~CSyncMidTask() {}
 
 	public:
@@ -54,7 +54,7 @@ int main()
 	class CSyncStartTask : public sftm::CTask
 	{
 	public:
-		CSyncStartTask(sftm::CChainController& ÒhainController) :sftm::CTask(ÒhainController) {}
+		CSyncStartTask(sftm::CChainController& —ÅhainController) :sftm::CTask(—ÅhainController) {}
 		virtual ~CSyncStartTask() {}
 
 	public:

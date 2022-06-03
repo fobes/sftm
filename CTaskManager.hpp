@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CWorker.hpp"
 #include <array>
 #include "configs.h"

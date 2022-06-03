@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CSyncPrimitive.hpp"
 #include "configs.h"
 
