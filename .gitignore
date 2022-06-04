@@ -1,7 +1,6 @@
 *.obj
 *.log
 *.tlog
-*.txt
 *.pdb
 /x64/*
 /Win32/*
