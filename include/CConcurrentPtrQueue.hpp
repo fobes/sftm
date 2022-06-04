@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "CSyncPrimitive.hpp"
 #include "configs.h"
+#include "CSyncPrimitive.hpp"
 
 namespace sftm
 {
@@ -25,7 +25,7 @@ namespace sftm
 
 	private:
 		T*	m_pItems[QUEUE_PHYSICAL_SIZE]	= { nullptr };
-		int	m_nCount						= 0;
+		std::uint32_t	m_nCount			= 0;
 
 		CSyncPrimitive m_lock;
 	};
@@ -40,12 +40,13 @@ namespace sftm
 
 		{
 			std::lock_guard<CSyncPrimitive> srcLock(srcQueue.m_lock);
+
 			if (!srcQueue.m_nCount)
 				return false;
 
 			pItem = srcQueue.m_pItems[srcQueue.m_nCount - 1];
 			srcQueue.m_pItems[srcQueue.m_nCount - 1] = nullptr;
-			srcQueue.m_nCount--;
+			--srcQueue.m_nCount;
 		}
 
 		std::lock_guard<CSyncPrimitive> currentLock(m_lock);

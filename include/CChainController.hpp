@@ -22,7 +22,7 @@ namespace sftm
 		void Reduce() noexcept;
 
 	private:
-		std::atomic<size_t> m_nCount = { 0 };
+		std::atomic<std::uint32_t> m_nCount = { 0 };
 	};
 
 	inline CChainController::CChainController() noexcept
@@ -42,11 +42,11 @@ namespace sftm
 
 	inline void CChainController::Increase() noexcept
 	{
-		m_nCount++;
+		++m_nCount;
 	}
 
 	inline void CChainController::Reduce() noexcept
 	{
-		m_nCount--;
+		--m_nCount;
 	}
 }

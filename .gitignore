@@ -10,3 +10,4 @@
 /Release_Profiler
 *.vcxproj.user
 /.vs/*
+/build/*

@@ -1,8 +1,11 @@
 ﻿#pragma once
+
 #include "CConcurrentPtrQueue.hpp"
 #include "CTask.hpp"
+
 #include <thread>
 #include <functional>
+#include <condition_variable>
 
 namespace sftm
 {
@@ -12,8 +15,8 @@ namespace sftm
 
 		struct COwnerData
 		{
-			CWorker*	m_pWorkers		= nullptr;
-			int*		m_pWorkerCount	= nullptr;
+			CWorker*	 m_pWorkers		= nullptr;
+			std::uint32_t* m_pWorkerCount	= nullptr;
 
 			std::condition_variable*	m_pCvWorkerIdle		= nullptr;
 			std::mutex*					m_pMutWorkerIdle	= nullptr;
@@ -108,10 +111,7 @@ namespace sftm
 
 	inline void CWorker::ReleaseResources() noexcept
 	{
-		m_ownerData.m_pWorkers = nullptr;
-		m_ownerData.m_pWorkerCount = nullptr;
-		m_ownerData.m_pCvWorkerIdle = nullptr;
-		m_ownerData.m_pMutWorkerIdle = nullptr;
+		m_ownerData = { nullptr, nullptr, nullptr, nullptr };
 
 		m_bFinished = false;
 		m_bStopping = true;
@@ -186,9 +186,9 @@ namespace sftm
 
 	inline bool CWorker::FindWork() noexcept
 	{
-		const std::size_t nOffset = static_cast<std::size_t>((this - m_ownerData.m_pWorkers + std::rand() % 100) % (*m_ownerData.m_pWorkerCount));
+		const std::uint32_t nOffset = static_cast<std::uint32_t>((this - m_ownerData.m_pWorkers + static_cast<std::uint32_t>(std::rand() % 64)) % (*m_ownerData.m_pWorkerCount));
 
-		for (std::size_t nWorker = 0; nWorker < (*m_ownerData.m_pWorkerCount); nWorker++)
+		for (std::uint32_t nWorker = 0; nWorker < (*m_ownerData.m_pWorkerCount); nWorker++)
 		{
 			CWorker* pWorker = m_ownerData.m_pWorkers + (nWorker + nOffset) % (*m_ownerData.m_pWorkerCount);
 			if (pWorker == this)
