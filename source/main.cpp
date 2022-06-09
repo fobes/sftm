@@ -1,96 +1,92 @@
-#include "../include/CTaskManager.hpp"
-#include "../include/Utils.hpp"
+#include "../include/Sync/CTaskManager.hpp"
+#include "../include/Async/CAsyncTaskManager.hpp"
+#include "../include/Common/Utils.hpp"
 
 #include <iostream>
 #include <chrono>
 
-const std::uint32_t nSyncStartTaskCount	= 100;
-const std::uint32_t nSyncMidTaskCount		= 100;
-const std::uint32_t nSyncEndTaskCount		= 100;
-const std::uint32_t nSyncTaskPlanCount	= nSyncStartTaskCount * nSyncMidTaskCount * nSyncEndTaskCount + nSyncMidTaskCount * nSyncEndTaskCount + nSyncEndTaskCount;
-
-const std::uint32_t nTestCount = 100;
-
-std::atomic<std::uint32_t> nExecutedSyncTasks = { 0 };
-
-class CSyncEndTask : public sftm::CTask
+void SyncTest() noexcept
 {
-public:
-	CSyncEndTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-	virtual ~CSyncEndTask() {}
+	constexpr std::uint32_t nStartTaskCount = 100;
+	constexpr std::uint32_t nMidTaskCount	= 100;
+	constexpr std::uint32_t nEndTaskCount	= 100;
+	constexpr std::uint32_t nTaskPlanCount	= nStartTaskCount * nMidTaskCount * nEndTaskCount + nMidTaskCount * nEndTaskCount + nEndTaskCount;
+	constexpr std::uint32_t nTestCount		= 100;
 
-public:
-	virtual void Execute(sftm::CWorker& worker) noexcept override
+	static std::atomic<std::uint32_t> nExecutedTasks = { 0 };
+
+	class CSyncEndTask : public sftm::CTask
 	{
-		nExecutedSyncTasks++;
-	}
-};
-class CSyncMidTask : public sftm::CTask
-{
-public:
-	CSyncMidTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-	virtual ~CSyncMidTask() {}
+	public:
+		CSyncEndTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+		virtual ~CSyncEndTask() {}
 
-public:
-	virtual void Execute(sftm::CWorker& worker) noexcept override
-	{
-		STACK_MEMORY(CSyncEndTask, nSyncEndTaskCount);
-		sftm::CChainController chainController;
-
-		for (std::uint32_t n = 0; n < nSyncMidTaskCount; n++)
+	public:
+		virtual void Execute(sftm::CWorker& worker) noexcept override
 		{
-			if (!worker.PushTask(new(pAddress++) CSyncEndTask(chainController)))
-			{
-				std::cout << "	Task not taken\n";
-				break;
-			}
+			nExecutedTasks++;
 		}
-
-		worker.WorkUntil(chainController);
-
-		nExecutedSyncTasks++;
-	}
-};
-
-class CSyncStartTask : public sftm::CTask
-{
-public:
-	CSyncStartTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-	virtual ~CSyncStartTask() {}
-
-public:
-	virtual void Execute(sftm::CWorker& worker) noexcept override
+	};
+	class CSyncMidTask : public sftm::CTask
 	{
-		STACK_MEMORY(CSyncMidTask, nSyncMidTaskCount);
-		sftm::CChainController chainController;
+	public:
+		CSyncMidTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+		virtual ~CSyncMidTask() {}
 
-		for (std::uint32_t n = 0; n < nSyncMidTaskCount; n++)
+	public:
+		virtual void Execute(sftm::CWorker& worker) noexcept override
 		{
-			if (!worker.PushTask(new(pAddress++) CSyncMidTask(chainController)))
+			STACK_MEMORY(CSyncEndTask, nEndTaskCount);
+			sftm::CChainController chainController;
+
+			for (std::uint32_t n = 0; n < nMidTaskCount; n++)
 			{
-				std::cout << "	Task not taken\n";
-				break;
+				if (!worker.PushTask(new(pAddress++) CSyncEndTask(chainController)))
+				{
+					std::cout << "	Task not taken\n";
+					break;
+				}
 			}
+
+			worker.WorkUntil(chainController);
+
+			nExecutedTasks++;
 		}
+	};
+	class CSyncStartTask : public sftm::CTask
+	{
+	public:
+		CSyncStartTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+		virtual ~CSyncStartTask() {}
 
-		worker.WorkUntil(chainController);
+	public:
+		virtual void Execute(sftm::CWorker& worker) noexcept override
+		{
+			STACK_MEMORY(CSyncMidTask, nMidTaskCount);
+			sftm::CChainController chainController;
 
-		nExecutedSyncTasks++;
-	}
-};
+			for (std::uint32_t n = 0; n < nMidTaskCount; n++)
+			{
+				if (!worker.PushTask(new(pAddress++) CSyncMidTask(chainController)))
+				{
+					std::cout << "	Task not taken\n";
+					break;
+				}
+			}
 
-int main()
-{
+			worker.WorkUntil(chainController);
+
+			nExecutedTasks++;
+		}
+	};
+
 	auto pTaskManager(std::make_unique<sftm::CTaskManager>());
 
-	if (pTaskManager->Start(std::thread::hardware_concurrency()))
-		std::cout << "Manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
-	else
-		std::cout << "Manager could not start\n";
+	pTaskManager->Start(std::thread::hardware_concurrency());
+	std::cout << "Sync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
 
-	auto pCurrentWorker = pTaskManager->GetCurrentThreadWorker();
-
-	if(!pCurrentWorker)
+	auto pCurrentWorker = pTaskManager->GetMainWorker();
+	if (!pCurrentWorker)
 		std::cout << "	Current thread worker not received\n";
 
 	std::cout << "Tests:\n";
@@ -99,14 +95,14 @@ int main()
 
 	for (std::uint32_t n = 0; n < nTestCount; ++n)
 	{
-		nExecutedSyncTasks.store(0);
+		nExecutedTasks.store(0);
 
 		auto t1 = std::chrono::high_resolution_clock::now();
 
-		STACK_MEMORY(CSyncStartTask, nSyncStartTaskCount);
+		STACK_MEMORY(CSyncStartTask, nStartTaskCount);
 		sftm::CChainController chainController;
 
-		for (std::uint32_t n = 0; n < nSyncStartTaskCount; n++)
+		for (std::uint32_t n = 0; n < nStartTaskCount; n++)
 		{
 			if (!pCurrentWorker->PushTask(new(pAddress++) CSyncStartTask(chainController)))
 			{
@@ -118,7 +114,7 @@ int main()
 
 		auto t2 = std::chrono::high_resolution_clock::now();
 
-		std::cout << n << ":	Planned: " << nSyncTaskPlanCount << "; Execued: " << nExecutedSyncTasks << ";";
+		std::cout << n << ":	Planned: " << nTaskPlanCount << "; Execued: " << nExecutedTasks << ";";
 
 		auto nUsCount = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 		std::cout << " Time: " << nUsCount << " uS;\n";
@@ -134,11 +130,60 @@ int main()
 	std::cout << "\n	Max time:		" << nMaxTime << "	uS";
 	std::cout << "\n	Avg time:		" << nAvarageTime << "	uS";
 	std::cout << "\n	Min time:		" << nMinTime << "	uS";
-	std::cout << "\n	Avg time on task:	" << (float)nAvarageTime / (float)nSyncTaskPlanCount * 1000.0f << "	nS\n";
+	std::cout << "\n	Avg time on task:	" << (float)nAvarageTime / (float)nTaskPlanCount * 1000.0f << "	nS\n";
 
-	
+
 	pTaskManager->Stop();
-	std::cout << "\n	Manager stopped\n";
+	std::cout << "\n	Sync manager stopped\n";
+}
+void AsyncTest() noexcept
+{
+	constexpr std::uint32_t nTaskPlanCount = 100;
+
+	static std::atomic<uint32_t> nExecutedTasks = { 0 };
+
+	class CTestTask : public sftm::CAsyncTask
+	{
+	public:
+		virtual ~CTestTask() {}
+
+	public:
+		void Execute() noexcept override
+		{
+			++nExecutedTasks;
+
+			delete this;
+		}
+	};
+
+	auto pTaskManager = std::make_unique<sftm::CAsyncTaskManager>();
+	pTaskManager->Start(std::thread::hardware_concurrency());
+	std::cout << "\n\n\nAsync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+
+	for(std::uint32_t n = 0; n < nTaskPlanCount; ++n)
+	{
+		pTaskManager->PushTask(new CTestTask);
+	}
+
+	while(nExecutedTasks != nTaskPlanCount){}
+
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto nUsCount = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+	std::cout << "	Planned tasks: " << nTaskPlanCount << "; Execued tasks: " << nExecutedTasks << ";";
+	std::cout << "\n	Execution time:		" << nUsCount << "	uS";
+
+	pTaskManager->Stop();
+	std::cout << "\n	Async manager stopped\n";
+}
+
+int main()
+{
+	SyncTest();
+	AsyncTest();
+
+	system("pause");
 
 	return 0;
 }

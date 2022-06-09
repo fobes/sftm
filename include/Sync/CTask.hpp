@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "CChainController.hpp"
+#include "../Common/CChainController.hpp"
 
 namespace sftm
 {
@@ -8,8 +8,9 @@ namespace sftm
 	class CTask
 	{
 	public:
-		CTask(CChainController& cc) noexcept;
-		virtual ~CTask();
+		CTask(CChainController& cc) noexcept 
+			:m_chainController(cc) {}
+		virtual ~CTask(){}
 
 	public:
 		CTask()							= delete;
@@ -24,15 +25,4 @@ namespace sftm
 	public:
 		CChainController& m_chainController;
 	};
-
-	inline CTask::CTask(CChainController& cc) noexcept
-		:m_chainController(cc)
-	{
-
-	}
-
-	inline CTask::~CTask() noexcept
-	{
-
-	}
 }
