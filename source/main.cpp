@@ -85,9 +85,7 @@ void SyncTest() noexcept
 	pTaskManager->Start(std::thread::hardware_concurrency());
 	std::cout << "Sync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
 
-	auto pCurrentWorker = pTaskManager->GetMainWorker();
-	if (!pCurrentWorker)
-		std::cout << "	Current thread worker not received\n";
+	auto& currentWorker = pTaskManager->GetMainWorker();
 
 	std::cout << "Tests:\n";
 
@@ -104,13 +102,13 @@ void SyncTest() noexcept
 
 		for (std::uint32_t n = 0; n < nStartTaskCount; n++)
 		{
-			if (!pCurrentWorker->PushTask(new(pAddress++) CSyncStartTask(chainController)))
+			if (!currentWorker.PushTask(new(pAddress++) CSyncStartTask(chainController)))
 			{
 				std::cout << "	Task not taken\n";
 				break;
 			}
 		}
-		pCurrentWorker->WorkUntil(chainController);
+		currentWorker.WorkUntil(chainController);
 
 		auto t2 = std::chrono::high_resolution_clock::now();
 

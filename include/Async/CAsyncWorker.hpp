@@ -13,6 +13,14 @@ namespace sftm
 	{
 		friend class CAsyncTaskManager;
 
+		struct COwnerData
+		{
+			std::condition_variable*	m_pCvWorkerIdle		= nullptr;
+			std::mutex*					m_pMutWorkerIdle	= nullptr;
+
+			CConcurrentPtrQueue<CAsyncTask>* m_pTaskQueue	= nullptr;
+		};
+
 	public:
 		CAsyncWorker() {}
 		~CAsyncWorker() {}
@@ -36,26 +44,19 @@ namespace sftm
 		{
 			while (!m_bStopping)
 			{
-				CAsyncTask* task = nullptr;
+				CAsyncTask* pTask = m_ownerData.m_pTaskQueue->Pop();
+				if (pTask)
+					pTask->Execute();
 
-				{
-					std::unique_lock<std::mutex> lock(*m_pMutWorkerIdle);
-					m_pCvWorkerIdle->wait(lock, [this] { return !m_pTaskQueue->Empty(); });
-
-					task = m_pTaskQueue->Pop();
-				}
-
-				if (task)
-					task->Execute();
+				std::unique_lock<std::mutex> lock(*m_ownerData.m_pMutWorkerIdle);
+				m_ownerData.m_pCvWorkerIdle->wait(lock);
 			}
 
 			m_bFinished = true;
 		}
 
 	private:
-		std::condition_variable*         m_pCvWorkerIdle    = nullptr;
-		std::mutex*                      m_pMutWorkerIdle	= nullptr;
-		CConcurrentPtrQueue<CAsyncTask>* m_pTaskQueue		= nullptr;
+		COwnerData m_ownerData;
 
 	private:
 		volatile bool m_bStopping = false;

@@ -56,9 +56,9 @@ namespace sftm
 			}
 		}
 
-		CWorker* GetMainWorker() noexcept
+		CWorker& GetMainWorker() noexcept
 		{
-			return &m_workers[0];
+			return m_workers[0];
 		}
 		std::uint32_t GetWorkersCount() const noexcept
 		{

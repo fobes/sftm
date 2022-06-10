@@ -34,9 +34,9 @@ namespace sftm
 
 			for (std::uint32_t nWorker = 0; nWorker < nInitWorkers; nWorker++)
 			{
-				m_workers[nWorker].m_pCvWorkerIdle	= &m_cvWorkerIdle;
-				m_workers[nWorker].m_pMutWorkerIdle = &m_mtxWorkerIdle;
-				m_workers[nWorker].m_pTaskQueue		= &m_taskQueue;
+				m_workers[nWorker].m_ownerData.m_pCvWorkerIdle	= &m_cvWorkerIdle;
+				m_workers[nWorker].m_ownerData.m_pMutWorkerIdle = &m_mtxWorkerIdle;
+				m_workers[nWorker].m_ownerData.m_pTaskQueue		= &m_taskQueue;
 
 				m_workers[nWorker].Start();
 			}
