@@ -11,7 +11,7 @@ void SyncTest() noexcept
 	constexpr std::uint32_t nMidTaskCount	= 100;
 	constexpr std::uint32_t nEndTaskCount	= 100;
 	constexpr std::uint32_t nTaskPlanCount	= nStartTaskCount * nMidTaskCount * nEndTaskCount + nMidTaskCount * nEndTaskCount + nEndTaskCount;
-	constexpr std::uint32_t nTestCount		= 100;
+	constexpr std::uint32_t nTestCount		= 1000;
 
 	static std::atomic<std::uint32_t> nExecutedTasks = { 0 };
 
@@ -82,7 +82,7 @@ void SyncTest() noexcept
 
 	auto pTaskManager(std::make_unique<sftm::CTaskManager>());
 
-	pTaskManager->Start(std::thread::hardware_concurrency());
+	pTaskManager->Start(std::thread::hardware_concurrency() - 1);
 	std::cout << "Sync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
 
 	auto& currentWorker = pTaskManager->GetMainWorker();

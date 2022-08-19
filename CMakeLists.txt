@@ -6,6 +6,7 @@ project(${PROJECT_NAME})
 set(HEADERS
 	include/Common/configs.h
 	include/Common/Utils.hpp
+	include/Common/CSpinLock.hpp
 	include/Common/CSyncPrimitive.hpp
 	include/Common/CChainController.hpp
 	include/Common/CConcurrentPtrQueue.hpp
