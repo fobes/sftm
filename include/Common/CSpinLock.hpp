@@ -23,6 +23,6 @@ namespace sftm
         }
 
     private:
-		std::atomic<bool> m_bLock = { false };
+	std::atomic<bool> m_bLock = { false };
     };
 }
