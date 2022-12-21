@@ -29,6 +29,25 @@ namespace sftm
 
 			return true;
 		}
+		template<class TItem>
+		bool Push(TItem* pItem, std::uint32_t nCount) noexcept
+		{
+			std::lock_guard<CSyncPrimitive> lock(m_lock);
+
+			if (m_nCount + nCount >= QUEUE_PHYSICAL_SIZE)
+				return false;
+
+			for (std::uint32_t n = 0; n < nCount; ++n)
+			{
+				m_pItems[m_nCount + n] = pItem;
+				++pItem;
+			}
+
+			m_nCount += nCount;
+
+			return true;
+		}
+
 		T* Pop() noexcept
 		{
 			if (!m_nCount)

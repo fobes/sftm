@@ -33,11 +33,10 @@ namespace sftm
 		CWorker& operator=(CWorker&&)	= delete;
 
 	public:
-		bool PushTask(CTask* pTask) noexcept
+		template<class TItem>
+		bool PushTask(TItem* pItems, std::uint32_t nCount) noexcept
 		{
-			pTask->m_chainController.Increase();
-
-			bool bResult = m_taskQueue.Push(pTask);
+			bool bResult = m_taskQueue.Push(pItems, nCount);
 
 			m_ownerData.m_pCvWorkerIdle->notify_all();
 

@@ -11,128 +11,150 @@ void SyncTest() noexcept
 	constexpr std::uint32_t nMidTaskCount	= 100;
 	constexpr std::uint32_t nEndTaskCount	= 100;
 	constexpr std::uint32_t nTaskPlanCount	= nStartTaskCount * nMidTaskCount * nEndTaskCount + nMidTaskCount * nEndTaskCount + nEndTaskCount;
-	constexpr std::uint32_t nTestCount		= 1000;
+	constexpr std::uint32_t nTestCount		= 100;
 
-	static std::atomic<std::uint32_t> nExecutedTasks = { 0 };
-
-	class CSyncEndTask : public sftm::CTask
+	float fManagerTaskTime = 0;
 	{
-	public:
-		CSyncEndTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-		virtual ~CSyncEndTask() {}
+		static std::atomic<std::uint32_t> nExecutedTasks = 0;
 
-	public:
-		virtual void Execute(sftm::CWorker& worker) noexcept override
+		class CSyncEndTask : public sftm::CTask
 		{
-			nExecutedTasks++;
-		}
-	};
-	class CSyncMidTask : public sftm::CTask
-	{
-	public:
-		CSyncMidTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-		virtual ~CSyncMidTask() {}
+		public:
+			CSyncEndTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+			virtual ~CSyncEndTask() {}
 
-	public:
-		virtual void Execute(sftm::CWorker& worker) noexcept override
-		{
-			STACK_MEMORY(CSyncEndTask, nEndTaskCount);
-			sftm::CChainController chainController;
-
-			for (std::uint32_t n = 0; n < nMidTaskCount; n++)
+		public:
+			virtual void Execute(sftm::CWorker& worker) noexcept override
 			{
-				if (!worker.PushTask(new(pAddress++) CSyncEndTask(chainController)))
-				{
-					std::cout << "	Task not taken\n";
-					break;
-				}
+				nExecutedTasks++;
 			}
-
-			worker.WorkUntil(chainController);
-
-			nExecutedTasks++;
-		}
-	};
-	class CSyncStartTask : public sftm::CTask
-	{
-	public:
-		CSyncStartTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
-		virtual ~CSyncStartTask() {}
-
-	public:
-		virtual void Execute(sftm::CWorker& worker) noexcept override
+		};
+		class CSyncMidTask : public sftm::CTask
 		{
-			STACK_MEMORY(CSyncMidTask, nMidTaskCount);
-			sftm::CChainController chainController;
+		public:
+			CSyncMidTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+			virtual ~CSyncMidTask() {}
 
-			for (std::uint32_t n = 0; n < nMidTaskCount; n++)
+		public:
+			virtual void Execute(sftm::CWorker& worker) noexcept override
 			{
-				if (!worker.PushTask(new(pAddress++) CSyncMidTask(chainController)))
-				{
-					std::cout << "	Task not taken\n";
-					break;
-				}
+				STACK_MEMORY(CSyncEndTask, nEndTaskCount);
+				sftm::CChainController chainController(nEndTaskCount);
+				for (std::uint32_t n = 0; n < nEndTaskCount; n++)
+					new(pAddress + n) CSyncEndTask(chainController);
+
+				worker.PushTask(pAddress, nEndTaskCount);
+				worker.WorkUntil(chainController);
+
+				nExecutedTasks++;
 			}
-
-			worker.WorkUntil(chainController);
-
-			nExecutedTasks++;
-		}
-	};
-
-	auto pTaskManager(std::make_unique<sftm::CTaskManager>());
-
-	pTaskManager->Start(std::thread::hardware_concurrency() - 1);
-	std::cout << "Sync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
-
-	auto& currentWorker = pTaskManager->GetMainWorker();
-
-	std::cout << "Tests:\n";
-
-	std::uint32_t nAverageTime = 0, nMaxTime = 0, nMinTime = 0xFFFFFFFF;
-
-	for (std::uint32_t n = 0; n < nTestCount; ++n)
-	{
-		nExecutedTasks.store(0);
-
-		auto t1 = std::chrono::high_resolution_clock::now();
-
-		STACK_MEMORY(CSyncStartTask, nStartTaskCount);
-		sftm::CChainController chainController;
-
-		for (std::uint32_t n = 0; n < nStartTaskCount; n++)
+		};
+		class CSyncStartTask : public sftm::CTask
 		{
-			if (!currentWorker.PushTask(new(pAddress++) CSyncStartTask(chainController)))
+		public:
+			CSyncStartTask(sftm::CChainController& chainController) :sftm::CTask(chainController) {}
+			virtual ~CSyncStartTask() {}
+
+		public:
+			virtual void Execute(sftm::CWorker& worker) noexcept override
 			{
-				std::cout << "	Task not taken\n";
-				break;
+				STACK_MEMORY(CSyncMidTask, nMidTaskCount);
+				sftm::CChainController chainController(nMidTaskCount);
+				for (std::uint32_t n = 0; n < nMidTaskCount; ++n)
+					new(pAddress + n) CSyncMidTask(chainController);
+
+				worker.PushTask(pAddress, nMidTaskCount);
+				worker.WorkUntil(chainController);
+
+				nExecutedTasks++;
 			}
+		};
+
+		auto pTaskManager(std::make_unique<sftm::CTaskManager>());
+		
+		pTaskManager->Start(std::thread::hardware_concurrency() - 1);
+		std::cout << "Sync manager started on " << pTaskManager->GetWorkersCount() << " threads\n";
+
+		auto& currentWorker = pTaskManager->GetMainWorker();
+
+		std::cout << "	Tests:			" << nTestCount << "	iterations\n";
+
+		std::uint32_t nAverageTime = 0, nMaxTime = 0, nMinTime = 0xFFFFFFFF;
+
+		for (std::uint32_t n = 0; n < nTestCount; ++n)
+		{
+			nExecutedTasks.store(0);
+
+			auto t1 = std::chrono::high_resolution_clock::now();
+
+			STACK_MEMORY(CSyncStartTask, nStartTaskCount);
+			sftm::CChainController chainController(nStartTaskCount);
+			for (std::uint32_t n = 0; n < nStartTaskCount; ++n)
+				new(pAddress + n) CSyncStartTask(chainController);
+
+			currentWorker.PushTask(pAddress, nStartTaskCount);
+			currentWorker.WorkUntil(chainController);
+
+			auto t2 = std::chrono::high_resolution_clock::now();
+			auto nUsCount = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+			if(nTaskPlanCount != nExecutedTasks)
+				std::cout << n << "	Planned: " << nTaskPlanCount << "; Execued: " << nExecutedTasks << ";\n";
+
+			nAverageTime += nUsCount;
+			if (nMaxTime < nUsCount)
+				nMaxTime = nUsCount;
+			if (nMinTime > nUsCount)
+				nMinTime = nUsCount;
 		}
-		currentWorker.WorkUntil(chainController);
 
-		auto t2 = std::chrono::high_resolution_clock::now();
-
-		std::cout << n << ":	Planned: " << nTaskPlanCount << "; Execued: " << nExecutedTasks << ";";
-
-		auto nUsCount = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-		std::cout << " Time: " << nUsCount << " uS;\n";
-
-		nAverageTime += nUsCount;
-		if (nMaxTime < nUsCount)
-			nMaxTime = nUsCount;
-		if (nMinTime > nUsCount)
-			nMinTime = nUsCount;
+		auto nAvarageTime		= nAverageTime / nTestCount;
+		fManagerTaskTime = (float)nAvarageTime / (float)nTaskPlanCount * 1000.0f;
+		std::cout << "	Max time:		"		<< nMaxTime				<<	"	uS\n";
+		std::cout << "	Avg time:		"		<< nAvarageTime			<<	"	uS\n";
+		std::cout << "	Min time:		"		<< nMinTime				<<	"	uS\n";
+		std::cout << "	Avg time on task:	"	<< fManagerTaskTime		<< "	nS\n";
+	
+		pTaskManager->Stop();
 	}
 
-	auto nAvarageTime = nAverageTime / nTestCount;
-	std::cout << "\n	Max time:		" << nMaxTime << "	uS";
-	std::cout << "\n	Avg time:		" << nAvarageTime << "	uS";
-	std::cout << "\n	Min time:		" << nMinTime << "	uS";
-	std::cout << "\n	Avg time on task:	" << (float)nAvarageTime / (float)nTaskPlanCount * 1000.0f << "	nS\n";
+	float fSingleThreadTime = 0;
+	{
+		std::cout << "\nSingle thread the same task start\n";
 
+		std::cout << "	Tests:			" << nTestCount << "	iterations\n";
 
-	pTaskManager->Stop();
-	std::cout << "\n	Sync manager stopped\n";
+		static std::atomic<std::uint32_t> nExecutedTasks = 0;
+		std::uint32_t nAverageTime = 0, nMaxTime = 0, nMinTime = 0xFFFFFFFF;
+
+		for (std::uint32_t n = 0; n < nTestCount; ++n)
+		{
+			nExecutedTasks.store(0);
+
+			auto tl1 = std::chrono::high_resolution_clock::now();
+
+			for (std::uint32_t n = 0; n < nTaskPlanCount; ++n)
+				++nExecutedTasks;
+
+			auto tl2 = std::chrono::high_resolution_clock::now();
+			auto nUsCount = std::chrono::duration_cast<std::chrono::microseconds>(tl2 - tl1).count();
+
+			nAverageTime += nUsCount;
+			if (nMaxTime < nUsCount)
+				nMaxTime = nUsCount;
+			if (nMinTime > nUsCount)
+				nMinTime = nUsCount;
+		}
+
+		auto nAvarageTime = nAverageTime / nTestCount;
+		fSingleThreadTime = (float)nAvarageTime / (float)nTaskPlanCount * 1000.0f;
+		std::cout << "	Max time:		"		<< nMaxTime				<< "	uS\n";
+		std::cout << "	Avg time:		"		<< nAvarageTime			<< "	uS\n";
+		std::cout << "	Min time:		"		<< nMinTime				<< "	uS\n";
+		std::cout << "	Avg time on task:	"	<< fSingleThreadTime	<< "	nS\n";
+	}
+
+	std::cout << "	\n	Average task overhead:	" << fManagerTaskTime - fSingleThreadTime <<"	nS\n";
+
 }
 void AsyncTest() noexcept
 {

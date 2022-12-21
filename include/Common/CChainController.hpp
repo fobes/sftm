@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include <atomic>
+#include <cstdint>
 
 namespace sftm
 {
 	class CChainController
 	{
 	public:
-		CChainController() noexcept {}
+		CChainController(std::uint32_t nValue) noexcept : m_nCount(nValue) {}
 		~CChainController() {}
 
 	public:
@@ -31,6 +32,6 @@ namespace sftm
 		}
 
 	private:
-		std::atomic<std::uint32_t> m_nCount = { 0 };
+		std::atomic<std::uint32_t> m_nCount;
 	};
 }
